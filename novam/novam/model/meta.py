@@ -2,7 +2,7 @@
 from sqlalchemy import MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-__all__ = ['session', 'engine', 'metadata', 'image_store']
+__all__ = ['session', 'engine', 'metadata', 'image_store', 'planet_timestamp']
 
 # SQLAlchemy database engine. Updated by model.init_model()
 engine = None

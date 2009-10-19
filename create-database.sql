@@ -1,43 +1,24 @@
-CREATE TABLE Stops (
-	id BIGINT UNSIGNED AUTO_INCREMENT,
+CREATE SEQUENCE stops_id_seq;
+
+CREATE TABLE stops (
+	id INTEGER DEFAULT nextval('stops_id_seq') NOT NULL PRIMARY KEY,
 	lat DECIMAL(10,7) NOT NULL,
 	lon DECIMAL(10,7) NOT NULL,
-	osm_id BIGINT UNSIGNED,
-	osm_version BIGINT UNSIGNED,
-	PRIMARY KEY (id),
-	INDEX (lat, lon),
-	INDEX (osm_id, osm_version),
-	UNIQUE (osm_id)
-	)
-ENGINE=InnoDB;
+	osm_id BIGINT NOT NULL UNIQUE,
+	osm_version BIGINT NOT NULL CHECK (osm_version > 0)
+	);
+ALTER SEQUENCE stops_id_seq OWNED BY stops.id;
+
+CREATE INDEX stops_lat_lon_idx ON stops (lat, lon);
+CREATE INDEX stops_lon_lat_idx ON stops (lon, lat);
+CREATE INDEX stops_osm_id_osm_version_idx ON stops (osm_id, osm_version);
 
 CREATE TABLE Tags (
-	stop_id BIGINT UNSIGNED,
+	stop_id INTEGER NOT NULL
+		REFERENCES stops(id) ON DELETE CASCADE,
 	name VARCHAR(255) NOT NULL,
-	value TEXT NOT NULL,
-	PRIMARY KEY (stop_id, name),
-	FOREIGN KEY (stop_id)
-		REFERENCES Stops(id)
-		ON DELETE CASCADE
-	)
-ENGINE=InnoDB;
+	value VARCHAR(65535) NOT NULL,  -- based on MySQL's TEXT type
+	PRIMARY KEY (stop_id, name)
+	);
 
-CREATE TABLE Waypoints (
-	id BIGINT UNSIGNED AUTO_INCREMENT,
-	name VARCHAR(100),
-	lat DECIMAL(10,7) NOT NULL,
-	lon DECIMAL(10,7) NOT NULL,
-	PRIMARY KEY (id),
-	INDEX (lat, lon)
-)
-ENGINE=InnoDB;
-
-CREATE TABLE Images (
-	id BIGINT UNSIGNED AUTO_INCREMENT,
-	lat DECIMAL(10,7) NOT NULL,
-	lon DECIMAL(10,7) NOT NULL,
-	file_id CHAR(36) NOT NULL,
-	PRIMARY KEY (id),
-	INDEX (lat, lon)
-)
-ENGINE=InnoDB;
+VACUUM ANALYZE;

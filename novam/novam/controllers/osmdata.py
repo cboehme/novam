@@ -128,7 +128,7 @@ class OsmdataController(BaseController):
 				"tags": tags_struct
 			})
 
-		return stops_struct
+		return {"stops": stops_struct}
 
 	@jsonify
 	def show(self, id):

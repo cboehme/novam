@@ -18,30 +18,32 @@ function uniqueId()
 uniqueId.nextId = 0;
 
 /*
- * Replace misc. separators with semicolons in a string
+ * Get stop type
  */
-function replaceSeparators(str, separator, replaceWhitespace)
-{
-	var newStr;
-
-	if (separator != undefined && separator != '')
-		newStr = str.replace(new RegExp(regExpEscape(separator), 'g'), ';');
+function get_stop_type(stop) {
+	if ('highway' in stop.tags 
+		&& 'naptan:AtcoCode' in stop.tags 
+		&& (!('naptan:unverified' in stop.tags)
+			|| (!('naptan:verified' in stop.tags) || stop.tags['naptan:verified'] == 'yes')
+		)
+		&& 'route_ref' in stop.tags
+		&& 'shelter' in stop.tags)
+			return 'finished_stop';
+	else if (!('highway' in stop.tags)
+		&& 'naptan:AtcoCode' in stop.tags 
+		&& ('naptan:unverified' in stop.tags 
+			|| ('naptan:verified' in stop.tags && stop.tags['naptan:verified'] == 'no')
+		))
+			return 'plain_naptan_stop';
+	else if ('highway' in stop.tags
+		&& !('naptan:AtcoCode' in stop.tags))
+			return 'plain_osm_stop';
+	else if (!('highway' in stop.tags)
+		&& 'naptan:AtcoCode' in stop.tags 
+		&& stop.tags['physically_present'] == 'no')
+			return 'no_physical_stop';
 	else
-	{
-		// If no separator is provided try first a set 
-		// of default separators, then replace all 
-		// none-word characters which are not whitespace
-		// and finally replace whitespace if everything
-		// else failed (only if replaceWhitespace is set):
-		newStr = str.replace(/(\|)|(\\\\s)|(\\s)/g, ';');
-		if (newStr == str)
-			newStr = str.replace(/[^\w\s]/g, ';');
-		if (newStr == str && replaceWhitespace)
-			newStr = str.replace(/\s/g, ';');
-	}
-	// Finally remove trailing, leading and duplicate semicolons:
-	newStr = newStr.replace(/(\s*;+\s*)/g, ';');
-	return newStr.replace(/(^;)|(;$)/g, '');
+		return 'merged_stop';
 }
 
 /*

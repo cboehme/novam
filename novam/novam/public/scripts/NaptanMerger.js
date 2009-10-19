@@ -23,20 +23,11 @@ window.NaptanMerger = {
 
 var jsFiles = new Array(
 	"NaptanMerger/Utilities.js",
+	"NaptanMerger/Model.js",
 	"NaptanMerger/WidgetContainer.js",
 	"NaptanMerger/Widget.js",
 	"NaptanMerger/MapControl.js",
-	"NaptanMerger/WaypointViewer.js",
-	"NaptanMerger/PositionChooser.js",
-	"NaptanMerger/ImageBrowser.js",
-	"NaptanMerger/ImageViewer.js",
-	"NaptanMerger/StopSelector.js",
-	"NaptanMerger/MergeSelector.js",
-	"NaptanMerger/MergeDialog.js",
 	"NaptanMerger/StopViewer.js",
-	"NaptanMerger/StopEditor.js",
-	"NaptanMerger/PositionSelector.js",
-	"NaptanMerger/WaypointSelector.js",
 	"NaptanMerger/FeatureControl.js",
 	"NaptanMerger/ImportsFinished.js"
 );

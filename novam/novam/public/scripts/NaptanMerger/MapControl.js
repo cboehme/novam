@@ -37,7 +37,8 @@ NaptanMerger.MapControl = Class.create({
 			controls: [
 				new OpenLayers.Control.Navigation(),
 				new OpenLayers.Control.PanZoomBar(),
-				new OpenLayers.Control.LayerSwitcher()
+				new OpenLayers.Control.LayerSwitcher(),
+				new OpenLayers.Control.Permalink()
 			],
 			units: 'm',
 			projection: this.EPSG900913,
@@ -141,8 +142,15 @@ NaptanMerger.MapControl = Class.create({
 			loc.lon = Number(v[1]);
 			zoom = Number(v[2]);
 		}
-		this.map.setCenter(loc.transform(
-			this.EPSG4326, this.map.getProjectionObject()), zoom);
+		// Only set the location if no position provided in 
+		// the url (which is handled by the ArgParser control:
+		if (location.search == "")
+		{
+			this.map.setCenter(loc.transform(
+				this.EPSG4326, this.map.getProjectionObject()), zoom);
+		} else {
+			this.map.events.triggerEvent("moveend");
+		}
 	},
 
 	destroy: function() {

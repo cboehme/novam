@@ -1,9 +1,9 @@
-window.NaptanMerger = {
-	_scriptName: "NaptanMerger.js",
+window.Novam = {
+	_scriptName: "Novam.js",
 
 	_getScriptLocation: function () {
 		var scriptLocation = "";
-		var isNM = new RegExp("(^|(.*?\\/))(" + NaptanMerger._scriptName + ")(\\?|$)");
+		var isNM = new RegExp("(^|(.*?\\/))(" + Novam._scriptName + ")(\\?|$)");
 				
 		var scripts = document.getElementsByTagName('script');
 		for (var i=0, len=scripts.length; i<len; i++) {
@@ -22,17 +22,17 @@ window.NaptanMerger = {
 
 
 var jsFiles = new Array(
-	"NaptanMerger/Utilities.js",
-	"NaptanMerger/Model.js",
-	"NaptanMerger/WidgetContainer.js",
-	"NaptanMerger/Widget.js",
-	"NaptanMerger/MapControl.js",
-	"NaptanMerger/StopViewer.js",
-	"NaptanMerger/FeatureControl.js",
-	"NaptanMerger/ImportsFinished.js"
+	"Novam/Utilities.js",
+	"Novam/Model.js",
+	"Novam/WidgetContainer.js",
+	"Novam/Widget.js",
+	"Novam/MapControl.js",
+	"Novam/StopViewer.js",
+	"Novam/FeatureControl.js",
+	"Novam/ImportsFinished.js"
 );
 
-var host = NaptanMerger._getScriptLocation();
+var host = Novam._getScriptLocation();
 for (var i=0, len=jsFiles.length; i<len; i++)
 {
 	var s = document.createElement("script");

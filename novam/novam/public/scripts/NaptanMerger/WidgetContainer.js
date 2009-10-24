@@ -1,8 +1,8 @@
 /**
- * Class: NaptanMerger.WidgetContainer
+ * Class: Novam.WidgetContainer
  * A container for widgets.
  */
-NaptanMerger.WidgetContainer = Class.create({
+Novam.WidgetContainer = Class.create({
 
 	widget: null,
 	element: null,

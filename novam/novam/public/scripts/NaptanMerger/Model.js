@@ -1,4 +1,4 @@
-NaptanMerger.Model = Class.create({
+Novam.Model = Class.create({
 
 	EVENT_TYPES: ["stop_added", "stop_removed", "stop_updated",
 		"stop_selected", "stop_unselected", "stop_highlighted", 

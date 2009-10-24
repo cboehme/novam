@@ -1,8 +1,8 @@
 /**
- * Class: NaptanMerger.Widget
+ * Class: Novam.Widget
  * Base class for widgets. Provides embedding and unhinging functionality.
  */
-NaptanMerger.Widget = Class.create({
+Novam.Widget = Class.create({
 	
 	widgetId: null,
 	container: null,
@@ -24,7 +24,7 @@ NaptanMerger.Widget = Class.create({
 	 * Embeds the widget within another DOM element.
 	 *
 	 * Parameters:
-	 * widgetContainer - {NaptanMerger.WidgetContainer} Container into which
+	 * widgetContainer - {Novam.WidgetContainer} Container into which
 	 *     the widget will be embedded.
 	 */
 	embed: function(widgetContainer) {

@@ -1,7 +1,7 @@
 /**
- * Class: NaptanMerger.MapControl
+ * Class: Novam.MapControl
  */
-NaptanMerger.MapControl = Class.create({
+Novam.MapControl = Class.create({
 
 	EPSG4326: new OpenLayers.Projection("EPSG:4326"),
 	EPSG900913: new OpenLayers.Projection("EPSG:900913"),
@@ -110,7 +110,7 @@ NaptanMerger.MapControl = Class.create({
 		this.map.events.register('moveend', this, this.get_stops);
 
 		// Add control for the marker layer:
-		this.feature_control = new NaptanMerger.FeatureControl(this.marker_layer);
+		this.feature_control = new Novam.FeatureControl(this.marker_layer);
 		this.map.addControl(this.feature_control);
 		this.feature_control.activate();
 

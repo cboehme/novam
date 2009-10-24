@@ -1,4 +1,4 @@
-NaptanMerger.FeatureControl = OpenLayers.Class(OpenLayers.Control, {
+Novam.FeatureControl = OpenLayers.Class(OpenLayers.Control, {
 
 	layer: null,
 	handlers: null,
@@ -12,7 +12,7 @@ NaptanMerger.FeatureControl = OpenLayers.Class(OpenLayers.Control, {
 
 	initialize: function (layer, options) {
 		this.EVENT_TYPES =
-			NaptanMerger.FeatureControl.prototype.EVENT_TYPES.concat(
+			Novam.FeatureControl.prototype.EVENT_TYPES.concat(
 			OpenLayers.Control.prototype.EVENT_TYPES
 		);
 

@@ -1,14 +1,14 @@
 /**
- * Class: NaptanMerger.StopViewer
+ * Class: Novam.StopViewer
  * A widget to show a bus stop and allow merging it.
  */
-NaptanMerger.StopViewer = Class.create(NaptanMerger.Widget, {
+Novam.StopViewer = Class.create(Novam.Widget, {
 	
 	model:null,
 	list: null,
 
 	initialize: function(model) {
-		NaptanMerger.Widget.prototype.initialize.call(this);
+		Novam.Widget.prototype.initialize.call(this);
 
 		this.model = model;
 		this.model.events.register("stop_highlighted", this, this.stop_highlighted);

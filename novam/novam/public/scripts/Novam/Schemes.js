@@ -46,9 +46,11 @@ Novam.schemes = [
 			if ("highway" in stop.tags
 				&& !("naptan:AtcoCode" in stop.tags)
 				)
-					return "yellow";
+					return "red";
+			else if ("naptan:unverified" in stop.tags)
+				return "purple";
 			else
-				return "blue";
+				return "brown";
 		}
 	},
 	{

@@ -82,8 +82,7 @@ Novam.MapControl = Class.create({
 				graphicWidth: 22,
 				graphicXOffset: -11,
 				graphicYOffset: -11,
-			},
-			"": {}
+			}
 		};
 		styleMap.addUniqueValueRules("default", "highlighted", sizeLookup);
 

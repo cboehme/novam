@@ -2,13 +2,16 @@ Novam.Model = Class.create({
 
 	EVENT_TYPES: ["stop_added", "stop_removed", "stop_updated",
 		"stop_selected", "stop_unselected", "stop_highlighted", 
-		"stop_unhighlighted", "stop_marked", "stop_unmarked"],
+		"stop_unhighlighted", "stop_marked", "stop_unmarked",
+		"scheme_added", "scheme_selected", "scheme_unselected"],
 
 	events: null,
 	stops: null,
 	selected_stop: null,
 	highlighted_stop: null,
 	marked_stop: null,
+	schemes: null,
+	selected_scheme: null,
 
 	initialize: function() {
 		this.events = new OpenLayers.Events(this, null, this.EVENT_TYPES);
@@ -17,6 +20,9 @@ Novam.Model = Class.create({
 		this.selected_stop = null;
 		this.highlighted_stop = null;
 		this.marked_stop = null;
+		
+		this.schemes = new Hash();
+		this.selected_scheme = null;
 	},
 
 	destroy: function() {
@@ -25,6 +31,11 @@ Novam.Model = Class.create({
 		this.hightlighted_stop = null;
 		this.selected_stop = null;
 		this.stops = null;
+
+		this.unselect_scheme();
+		this.selected_scheme = null;
+		this.schemes = null;
+
 		this.events = null;
 	},
 
@@ -161,6 +172,41 @@ Novam.Model = Class.create({
 			var stop = this.marked_stop;
 			this.marked_stop = null;
 			this.events.triggerEvent("stop_unmarked", stop);
+		}
+	},
+
+	has_scheme: function(id) {
+		return this.schemes.get(id) !== undefined;
+	},
+
+	add_scheme: function(scheme) {
+		if (!this.has_scheme(scheme.id)) {
+			this.schemes.set(scheme.id, scheme);
+			this.events.triggerEvent("scheme_added", scheme);
+		}
+	},
+
+	is_scheme_selected: function(id) {
+		return this.selected_scheme !== null 
+			&& this.selected_scheme.id == id;
+	},
+
+	select_scheme: function(id) {
+		if (!this.is_scheme_selected(id)) {
+			this.unselect_scheme();
+			var scheme = this.schemes.get(id);
+			if (scheme !== undefined) {
+				this.selected_scheme = scheme;
+				this.events.triggerEvent("scheme_selected", scheme);
+			}
+		}
+	},
+
+	unselect_scheme: function() {
+		if (this.selected_scheme !== null) {
+			var scheme = this.selected_scheme;
+			this.selected_scheme = null;
+			this.events.triggerEvent("scheme_unselected", scheme);
 		}
 	}
 });

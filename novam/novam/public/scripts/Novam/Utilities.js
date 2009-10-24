@@ -18,35 +18,6 @@ function uniqueId()
 uniqueId.nextId = 0;
 
 /*
- * Get stop type
- */
-function get_stop_type(stop) {
-	if ('highway' in stop.tags 
-		&& 'naptan:AtcoCode' in stop.tags 
-		&& (!('naptan:unverified' in stop.tags)
-			|| (!('naptan:verified' in stop.tags) || stop.tags['naptan:verified'] == 'yes')
-		)
-		&& 'route_ref' in stop.tags
-		&& 'shelter' in stop.tags)
-			return 'finished_stop';
-	else if (!('highway' in stop.tags)
-		&& 'naptan:AtcoCode' in stop.tags 
-		&& ('naptan:unverified' in stop.tags 
-			|| ('naptan:verified' in stop.tags && stop.tags['naptan:verified'] == 'no')
-		))
-			return 'plain_naptan_stop';
-	else if ('highway' in stop.tags
-		&& !('naptan:AtcoCode' in stop.tags))
-			return 'plain_osm_stop';
-	else if (!('highway' in stop.tags)
-		&& 'naptan:AtcoCode' in stop.tags 
-		&& stop.tags['physically_present'] == 'no')
-			return 'no_physical_stop';
-	else
-		return 'merged_stop';
-}
-
-/*
  * Get and set cookies
  */
 function setCookie(name, value)

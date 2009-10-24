@@ -18,6 +18,7 @@ Novam.MapControl = Class.create({
 	marker_layer: null,
 	feature_control: null,
 	map_status: null,
+	get_stop_colour: null,
 
 	initialize: function(container, model) {
 
@@ -31,6 +32,8 @@ Novam.MapControl = Class.create({
 		this.model.events.register("stop_unhighlighted", this, this.stop_unhighlighted);
 		this.model.events.register("stop_marked", this, this.stop_marked);
 		this.model.events.register("stop_unmarked", this, this.stop_unmarked);
+		this.model.events.register("scheme_selected", this, this.scheme_selected);
+		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
 
 		var restrictedExtent = new OpenLayers.Bounds(-11.6, 49.6, 3.6, 61.3);
 		this.map = new OpenLayers.Map(container, {
@@ -57,6 +60,9 @@ Novam.MapControl = Class.create({
 			transitionEffect: "resize"
 		});
 		this.map.addLayer(mapnik);
+		
+		// Install default colour handler:
+		this.get_stop_colour = this._default_get_stop_colour;
 
 		// Define styling for the marker layer:
 		var styleMap = new OpenLayers.StyleMap({
@@ -65,23 +71,11 @@ Novam.MapControl = Class.create({
 				graphicWidth: 16,
 				graphicXOffset: -8,
 				graphicYOffset: -8,
-				externalGraphic: '${type}${selected}${marked}${highlighted}.png',
+				externalGraphic: '${colour}${selected}${marked}${highlighted}.png',
 				cursor: 'pointer'
 			})
 		});
-
-		var opacityLookup = {
-			"deleted_nptg_stop": {graphicOpacity: 0.6},
-			"deleted_osm_stop": {graphicOpacity: 0.6},
-			"matched_nptg_stop": {graphicOpacity: 0.6},
-			"matched_osm_stop": {},
-			"plain_nptg_stop": {},
-			"plain_osm_stop": {},
-			"error_nptg_stop": {},
-			"error_osm_stop": {}
-		};
-		styleMap.addUniqueValueRules("default", "type", opacityLookup);
-
+		
 		var sizeLookup = {
 			"_highlighted": {
 				graphicHeight: 22,
@@ -94,7 +88,7 @@ Novam.MapControl = Class.create({
 		styleMap.addUniqueValueRules("default", "highlighted", sizeLookup);
 
 		var pointerLookup = {
-			"_selected": {cursor: ''},
+			"_selected": {cursor: ""},
 			"": {}
 		};
 		styleMap.addUniqueValueRules("default", "selected", pointerLookup);
@@ -135,8 +129,7 @@ Novam.MapControl = Class.create({
 		var loc = new OpenLayers.LonLat(-2.9, 54.7);
 		var zoom = 5;
 		cookie = getCookie("map_location");
-		if (cookie != null)
-		{
+		if (cookie != null) {
 			v = cookie.split(":");
 			loc.lat = Number(v[0]);
 			loc.lon = Number(v[1]);
@@ -144,8 +137,7 @@ Novam.MapControl = Class.create({
 		}
 		// Only set the location if no position provided in 
 		// the url (which is handled by the ArgParser control:
-		if (location.search == "")
-		{
+		if (location.search == "") {
 			this.map.setCenter(loc.transform(
 				this.EPSG4326, this.map.getProjectionObject()), zoom);
 		} else {
@@ -199,7 +191,7 @@ Novam.MapControl = Class.create({
 			
 			// Remove stops which are outside the viewport:
 			var remove_features = Array();
-			this.marker_layer.features.each(function(stops) {
+			this.marker_layer.features.each(function(stop) {
 				if (!this.map.getExtent().containsLonLat(
 					new OpenLayers.LonLat(stop.geometry.x, stop.geometry.y))
 					&& !this.model.is_stop_selected(stop.attributes.id)
@@ -224,7 +216,7 @@ Novam.MapControl = Class.create({
 
 		var attributes = new Object();
 		attributes.id = stop.id;
-		attributes.type = get_stop_type(stop);
+		attributes.colour = this.get_stop_colour(stop) + "_stop";
 		attributes.highlighted = this.UNHIGHLIGHTED;
 		attributes.selected = this.UNSELECTED;
 		attributes.marked = this.UNMARKED;
@@ -238,7 +230,7 @@ Novam.MapControl = Class.create({
 
 	stop_updated: function(stop) {
 		var feature = this._find_stop(stop.id);
-		feature.attributes.type = get_stop_type(stop);
+		feature.attributes.colour = this.get_stop_colour(stop) + "_stop";
 		this.marker_layer.drawFeature(feature);
 	},
 	
@@ -278,10 +270,30 @@ Novam.MapControl = Class.create({
 		this.marker_layer.drawFeature(feature);
 	},
 
-	_find_stop: function(id)
-	{
+	scheme_selected: function(scheme) {
+		this.get_stop_colour = scheme.get_stop_colour;
+		this._update_stop_colours();
+	},
+
+	scheme_unselected: function(scheme) {
+		this.get_stop_colour = this._default_get_stop_colour;
+		this._update_stop_colours();
+	},
+
+	_find_stop: function(id) {
 		return this.marker_layer.features.find(function(feature) { 
 			return feature.attributes.id == id; 
 		});
+	},
+
+	_update_stop_colours: function() {
+		this.marker_layer.features.each(function(stop) {
+			 stop.attributes.colour = this.get_stop_colour(this.model.stops.get(stop.attributes.id)) + "_stop";
+			 this.marker_layer.drawFeature(stop);
+		}, this);
+	},
+
+	_default_get_stop_colour: function(stop) {
+		return "grey";
 	}
 });

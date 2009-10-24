@@ -37,10 +37,7 @@ dl.StopViewer
 
 	margin: 0px;
 
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 10px;
-	padding-bottom: 10px;
+	padding: 10px;
 
 	font-size: small;
 
@@ -65,8 +62,66 @@ dl.StopViewer dd
 	margin-left: 180px;
 
 	width: auto;
-
 }
+
+/*
+ * Map Key
+ */
+
+dl.MapKey
+{
+	margin-left: 10px;
+	margin-top: 35px;
+}
+
+dl.MapKey dt
+{
+	display: block;
+	float: left;
+	clear: both;
+
+	width: 20px;
+
+	height: 20px;
+}
+
+dl.MapKey dd
+{
+	display: block;
+	margin-left: 30px;
+	margin-bottom: 7px;
+
+	width: auto;
+}
+
+/*
+ * SchemeSelector
+ */
+
+fieldset.SchemeSelector
+{
+	position: absolute;
+	left: 0px;
+	top: 23px;
+	right: 0px;
+	bottom: 0px;
+
+	margin: 0px;
+
+	padding: 10px;
+
+	border-style: none;
+
+	font-size: small;
+
+	overflow: auto;
+}
+
+fieldset.SchemeSelector label
+	{ display: none; }
+
+fieldset.SchemeSelector select
+	{ width: 100%; }
 
 /*
  * MapControl

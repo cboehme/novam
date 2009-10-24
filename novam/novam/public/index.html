@@ -19,16 +19,24 @@
 		var model = null;
 		var mapControl = null;
 		var stopViewer = null;
+		var mapKey = null;
+		var schemeSelector = null;
 
 		runApp(function () {
 			var stopPanel = new Novam.WidgetContainer("stopPanel");
+			var mapKeyPanel = new Novam.WidgetContainer("mapKeyPanel");
+			var schemePanel = new Novam.WidgetContainer("schemePanel");
 
 			model = new Novam.Model();
 
 			mapControl = new Novam.MapControl("map", model);
 			stopViewer = new Novam.StopViewer(model);
+			mapKey = new Novam.MapKey(model);
+			schemeSelector = new Novam.SchemeSelector(model);
 			
 			stopPanel.embedWidget(stopViewer);
+			mapKeyPanel.embedWidget(mapKey);
+			schemePanel.embedWidget(schemeSelector);
 		});
 
 	</script>
@@ -41,20 +49,7 @@
 	</ul>
 	<div id="map"></div>
 	<div id="stopPanel"></div>
-	<div id="mapKey">
-		<h2>Map Key</h2>
-		<dl>
-			<dt><img src="finished_stop.png" alt="Green bus stop marker"></dt>
-			<dd>Merged and completely tagged bus stop</dd>
-			<dt><img src="merged_stop.png" alt="Orange bus stop marker"></dt>
-			<dd>Merged bus stop which still lacks some tags</dd>
-			<dt><img src="no_physical_stop.png" alt="Grey bus stop marker"></dt>
-			<dd>Bus stop which is not marked on the ground</dd>
-			<dt><img src="plain_naptan_stop.png" alt="Blue bus stop marker"></dt>
-			<dd>Bus stop which was imported from NaPTAN and which has not been verified yet</dd>
-			<dt><img src="plain_osm_stop.png" alt="Yellow bus stop marker"></dt>
-			<dd>Bus stop in OpenStreetMap which has not yet been merged with NaPTAN data</dd>
-		</dl>
-	</div>
+	<div id="mapKeyPanel"></div>
+	<div id="schemePanel"></div>
 </body>
 </html>

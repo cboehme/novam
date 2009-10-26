@@ -32,7 +32,7 @@ Novam.MapKey = Class.create(Novam.Widget, {
 		$H(scheme.map_key).each(function(item) {
 			var dt = new Element('dt');
 			dt.appendChild(new Element("img", {
-				"src": item.key + "_stop.png", 
+				"src": item.key + ".png", 
 				"alt": item.key + " bus stop marker"
 			}));
 			

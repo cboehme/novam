@@ -18,7 +18,7 @@ Novam.MapControl = Class.create({
 	marker_layer: null,
 	feature_control: null,
 	map_status: null,
-	get_stop_colour: null,
+	get_stop_icon: null,
 
 	initialize: function(container, model) {
 
@@ -61,8 +61,8 @@ Novam.MapControl = Class.create({
 		});
 		this.map.addLayer(mapnik);
 		
-		// Install default colour handler:
-		this.get_stop_colour = this._default_get_stop_colour;
+		// Install default icon handler:
+		this.get_stop_icon = this._default_get_stop_icon;
 
 		// Define styling for the marker layer:
 		var styleMap = new OpenLayers.StyleMap({
@@ -71,7 +71,7 @@ Novam.MapControl = Class.create({
 				graphicWidth: 16,
 				graphicXOffset: -8,
 				graphicYOffset: -8,
-				externalGraphic: '${colour}${selected}${marked}${highlighted}.png',
+				externalGraphic: '${icon}${selected}${marked}${highlighted}.png',
 				cursor: 'pointer'
 			})
 		});
@@ -215,7 +215,7 @@ Novam.MapControl = Class.create({
 
 		var attributes = new Object();
 		attributes.id = stop.id;
-		attributes.colour = this.get_stop_colour(stop) + "_stop";
+		attributes.icon = this.get_stop_icon(stop);
 		attributes.highlighted = this.UNHIGHLIGHTED;
 		attributes.selected = this.UNSELECTED;
 		attributes.marked = this.UNMARKED;
@@ -229,7 +229,7 @@ Novam.MapControl = Class.create({
 
 	stop_updated: function(stop) {
 		var feature = this._find_stop(stop.id);
-		feature.attributes.colour = this.get_stop_colour(stop) + "_stop";
+		feature.attributes.icon = this.get_stop_icon(stop);
 		this.marker_layer.drawFeature(feature);
 	},
 	
@@ -270,13 +270,13 @@ Novam.MapControl = Class.create({
 	},
 
 	scheme_selected: function(scheme) {
-		this.get_stop_colour = scheme.get_stop_colour;
-		this._update_stop_colours();
+		this.get_stop_icon = scheme.get_stop_icon;
+		this._update_stop_icons();
 	},
 
 	scheme_unselected: function(scheme) {
-		this.get_stop_colour = this._default_get_stop_colour;
-		this._update_stop_colours();
+		this.get_stop_icon = this._default_get_stop_icon;
+		this._update_stop_icons();
 	},
 
 	_find_stop: function(id) {
@@ -285,14 +285,14 @@ Novam.MapControl = Class.create({
 		});
 	},
 
-	_update_stop_colours: function() {
+	_update_stop_icons: function() {
 		this.marker_layer.features.each(function(stop) {
-			 stop.attributes.colour = this.get_stop_colour(this.model.stops.get(stop.attributes.id)) + "_stop";
+			 stop.attributes.icon = this.get_stop_icon(this.model.stops.get(stop.attributes.id));
 			 this.marker_layer.drawFeature(stop);
 		}, this);
 	},
 
-	_default_get_stop_colour: function(stop) {
+	_default_get_stop_icon: function(stop) {
 		return "grey";
 	}
 });

@@ -77,6 +77,22 @@ function Text(str)
 	return document.createTextNode(str);
 }
 
+function Elem(name, attrs)
+{
+	var element = new Element(name, attrs);
+	var args = [];
+	for (var i = 2; i < arguments.length; ++i) {
+		args.push(arguments[i]);
+	}
+	element.appendChild(concatElements.apply(this, args));
+	return element;
+}
+
+function Fragment()
+{
+	return concatElements.apply(this, arguments);
+}
+
 function concatElements()
 {
 	var fragment = document.createDocumentFragment();

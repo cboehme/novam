@@ -6,6 +6,8 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 	
 	model:null,
 	list: null,
+	get_missing_tags: null,
+	get_invalid_tags: null,
 
 	initialize: function(model) {
 		Novam.Widget.prototype.initialize.call(this);
@@ -16,6 +18,8 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		this.model.events.register("stop_selected", this, this.stop_selected);
 		this.model.events.register("stop_unselected", this, this.stop_unselected);
 		this.model.events.register("stop_updated", this, this.stop_updated);
+		this.model.events.register("scheme_selected", this, this.scheme_selected);
+		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
 
 		var caption = new Element('h2', {'class': 'StopViewer'});
 		caption.appendChild(Text('Bus Stop'));
@@ -25,40 +29,54 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		this.container.appendChild(caption);
 		this.container.appendChild(this.list);
 
+		this.get_missing_tags = this._default_get_missing_tags;
+		this.get_invalid_tags = this._default_get_invalid_tags;
+
 		this.set_stop(null);
 	},
 
 	set_stop: function(stop) {
 
-		function appendItem(key, value) {
-			var dt = new Element('dt');
-			var dd = new Element('dd');
-
-			dt.appendChild(Text(key));
-			dd.appendChild(Text(value));
-
-			this.list.appendChild(dt);
-			this.list.appendChild(dd);
+		function appendItem(key, value, _class) {
+			this.list.appendChild(Fragment(
+				Elem("dt", {"class": _class}, key),
+				Elem("dd", {"class": _class}, value)
+			));
 		}
 		
 		this.list.removeChildren();
 		if (stop === null)
-			appendItem.call(this, 'No Stop Selected', '');
+			appendItem.call(this, Text("No Stop Selected"), "", "");
 		else
 		{
-			var tags = [];
-			for(tag in stop.tags)
-				tags.push(tag);
+			var missing_tags = this.get_missing_tags(stop); 
+			var invalid_tags = this.get_invalid_tags(stop);
+
+			var tags = $H(missing_tags).keys();
+			tags = tags.concat($H(stop.tags).keys());
 			tags.sort();
-			for (var i = 0; i < tags.length; ++i)
-			{
-				tag = tags[i];
-				if (tag.substring(0,7) == "naptan:")
-					shortenedTag = tag.substring(7);
-				else
-					shortenedTag = tag;
-				appendItem.call(this, shortenedTag+': ', stop.tags[tag]);
-			}
+
+			tags.each(function(tag) {
+				var shortened_tag = Text(tag);
+				if (tag.substring(0,7) == "naptan:") {
+					shortened_tag = Fragment(
+						Elem("span", {"class": "TagPrefix"}, "n:"),
+						tag.substring(7)
+					);
+				} 
+
+				if(tag in stop.tags) {
+					if (tag in invalid_tags) {
+						appendItem.call(this, shortened_tag.cloneNode(true), stop.tags[tag], "InvalidTag");
+						appendItem.call(this, shortened_tag, invalid_tags[tag], "InvalidTagRemark");
+					} else {
+						appendItem.call(this, shortened_tag, stop.tags[tag], "");
+					}
+				} else {
+					appendItem.call(this, shortened_tag, missing_tags[tag], "MissingTag");
+				}
+
+			}, this);
 		}
 	},
 
@@ -88,4 +106,35 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		}
 	},
 
+	scheme_selected: function(scheme) {
+		this.get_missing_tags = scheme.get_missing_tags;
+		this.get_invalid_tags = scheme.get_invalid_tags;
+
+		// Update display:
+		if (!this.model.highlighted_stop) {
+			this.set_stop(this.model.selected_stop);
+		} else {
+			this.set_stop(this.model.highlighted_stop);
+		}
+	},
+	
+	scheme_unselected: function(scheme) {
+		this.get_missing_tags = this._default_get_missing_tags;
+		this.get_invalid_tags = this._default_get_invalid_tags;
+
+		// Update display:
+		if (!this.model.highlighted_stop) {
+			this.set_stop(this.model.selected_stop);
+		} else {
+			this.set_stop(this.model.highlighted_stop);
+		}
+	},
+	
+	_default_get_missing_tags: function(stop) {
+		return {};
+	},
+
+	_default_get_invalid_tags: function(stop) {
+		return {};
+	}
 });

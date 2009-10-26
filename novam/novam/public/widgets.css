@@ -51,7 +51,7 @@ dl.StopViewer dt
 	clear: both;
 
 	width: auto;
-	min-width: 180px;
+	min-width: 190px;
 
 	font-weight: bold;
 }
@@ -59,10 +59,41 @@ dl.StopViewer dt
 dl.StopViewer dd
 {
 	display: block;
-	margin-left: 180px;
+	margin-left: -5px;
+	padding-left: 195px;
 
 	width: auto;
 }
+
+dl.StopViewer span.TagPrefix
+	{ color: #729fcf; }
+
+dl.StopViewer dd.MissingTag,
+dl.StopViewer dd.InvalidTag,
+dl.StopViewer dd.InvalidTagRemark
+	{ background-color: #fef7b8; }
+
+dl.StopViewer dd.MissingTag,
+dl.StopViewer dd.InvalidTag
+	{ margin-top: 2px; }
+
+dl.StopViewer .MissingTag,
+dl.StopViewer .InvalidTagRemark
+	{ margin-bottom: 2px; }
+
+dl.StopViewer dd.InvalidTag,
+dl.StopViewer dt.MissingTag
+{
+	font-weight: bold;
+	color: #a40000;
+}
+
+dl.StopViewer dt.InvalidTagRemark 
+	{ visibility: hidden; }
+
+dl.StopViewer dd.InvalidTagRemark,
+dl.StopViewer dd.MissingTag
+	{ color: #a40000; }
 
 /*
  * Map Key

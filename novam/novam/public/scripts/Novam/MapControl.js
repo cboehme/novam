@@ -66,31 +66,34 @@ Novam.MapControl = Class.create({
 
 		// Define styling for the marker layer:
 		var styleMap = new OpenLayers.StyleMap({
-			'default': new OpenLayers.Style({
+			"default": new OpenLayers.Style({
 				graphicHeight: 16,
 				graphicWidth: 16,
 				graphicXOffset: -8,
 				graphicYOffset: -8,
-				externalGraphic: '${icon}${selected}${marked}${highlighted}.png',
-				cursor: 'pointer'
+				externalGraphic: "${icon}${selected}${marked}${highlighted}.png",
+				cursor: "pointer"
 			})
 		});
 		
-		var sizeLookup = {
+		var highlightedLookup = {
 			"_highlighted": {
 				graphicHeight: 22,
 				graphicWidth: 22,
 				graphicXOffset: -11,
-				graphicYOffset: -11,
-			}
-		};
-		styleMap.addUniqueValueRules("default", "highlighted", sizeLookup);
-
-		var pointerLookup = {
-			"_selected": {cursor: ""},
+				graphicYOffset: -11
+			},
 			"": {}
 		};
-		styleMap.addUniqueValueRules("default", "selected", pointerLookup);
+		styleMap.addUniqueValueRules("default", "highlighted", highlightedLookup);
+
+		var selectedLookup = {
+			"_selected": {
+				cursor: ""
+			},
+			"": {}
+		};
+		styleMap.addUniqueValueRules("default", "selected", selectedLookup);
 
 		// Create the marker layer:
 		this.marker_layer = new OpenLayers.Layer.Vector('Markers', {
@@ -213,12 +216,13 @@ Novam.MapControl = Class.create({
 		var position = new OpenLayers.Geometry.Point(stop.lon, stop.lat);
 		position = position.transform(this.EPSG4326, this.EPSG900913);
 
-		var attributes = new Object();
-		attributes.id = stop.id;
-		attributes.icon = this.get_stop_icon(stop);
-		attributes.highlighted = this.UNHIGHLIGHTED;
-		attributes.selected = this.UNSELECTED;
-		attributes.marked = this.UNMARKED;
+		var attributes = {
+			id: stop.id,
+			icon: this.get_stop_icon(stop),
+			highlighted: this.UNHIGHLIGHTED,
+			selected: this.UNSELECTED,
+			marked: this.UNMARKED
+		};
 
 		this.marker_layer.addFeatures([new OpenLayers.Feature.Vector(position, attributes)]);
 	},

@@ -3,7 +3,8 @@ Novam.Model = Class.create({
 	EVENT_TYPES: ["stop_added", "stop_removed", "stop_updated",
 		"stop_selected", "stop_unselected", "stop_highlighted", 
 		"stop_unhighlighted", "stop_marked", "stop_unmarked",
-		"scheme_added", "scheme_selected", "scheme_unselected"],
+		"scheme_added", "scheme_selected", "scheme_unselected", 
+		"zoom_changed"],
 
 	events: null,
 	stops: null,
@@ -12,6 +13,7 @@ Novam.Model = Class.create({
 	marked_stop: null,
 	schemes: null,
 	selected_scheme: null,
+	zoom: null,
 
 	initialize: function() {
 		this.events = new OpenLayers.Events(this, null, this.EVENT_TYPES);
@@ -23,6 +25,8 @@ Novam.Model = Class.create({
 		
 		this.schemes = new Hash();
 		this.selected_scheme = null;
+
+		this.zoom = null;
 	},
 
 	destroy: function() {
@@ -35,6 +39,8 @@ Novam.Model = Class.create({
 		this.unselect_scheme();
 		this.selected_scheme = null;
 		this.schemes = null;
+
+		this.zoom = null;
 
 		this.events = null;
 	},
@@ -208,5 +214,10 @@ Novam.Model = Class.create({
 			this.selected_scheme = null;
 			this.events.triggerEvent("scheme_unselected", scheme);
 		}
+	},
+
+	set_zoom: function(zoom) {
+		this.zoom = zoom;
+		this.events.triggerEvent("zoom_changed", zoom);
 	}
 });

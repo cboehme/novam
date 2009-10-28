@@ -104,6 +104,8 @@ Novam.MapControl = Class.create({
 
 		this.map.events.register('moveend', this, this.save_map_location);
 		this.map.events.register('moveend', this, this.get_stops);
+		this.map.events.register('moveend', this, 
+			function(evt) { this.model.set_zoom(this.map.getZoom()); });
 
 		// Add control for the marker layer:
 		this.feature_control = new Novam.FeatureControl(this.marker_layer);
@@ -297,6 +299,6 @@ Novam.MapControl = Class.create({
 	},
 
 	_default_get_stop_icon: function(stop) {
-		return "grey";
+		return "grey_stop";
 	}
 });

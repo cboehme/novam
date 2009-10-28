@@ -33,7 +33,7 @@ dl.StopViewer
 	left: 0px;
 	top: 23px;
 	right: 0px;
-	bottom: 0px;
+	bottom: 23px;
 
 	margin: 0px;
 
@@ -94,6 +94,29 @@ dl.StopViewer dt.InvalidTagRemark
 dl.StopViewer dd.InvalidTagRemark,
 dl.StopViewer dd.MissingTag
 	{ color: #a40000; }
+
+p.StopViewer
+{
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+
+	height: 20px;
+
+	margin: 0px;
+
+	padding-left: 5px;
+	padding-top: 1px;
+	padding-right: 5px;
+	padding-bottom: 2px;
+
+	font-size: small;
+
+	overflow: auto;
+
+	text-align: right;
+}
 
 /*
  * Map Key

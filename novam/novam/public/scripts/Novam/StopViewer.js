@@ -4,8 +4,9 @@
  */
 Novam.StopViewer = Class.create(Novam.Widget, {
 	
-	model:null,
+	model: null,
 	list: null,
+	extras: null,
 	get_missing_tags: null,
 	get_invalid_tags: null,
 
@@ -20,14 +21,18 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		this.model.events.register("stop_updated", this, this.stop_updated);
 		this.model.events.register("scheme_selected", this, this.scheme_selected);
 		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
+		this.model.events.register("zoom_changed", this, this.update_edit_link);
 
-		var caption = new Element('h2', {'class': 'StopViewer'});
-		caption.appendChild(Text('Bus Stop'));
+		var caption = new Element("h2", {"class": "StopViewer"});
+		caption.appendChild(Text("Bus Stop"));
 
-		this.list = new Element('dl', {'class': 'StopViewer'});
+		this.list = new Element("dl", {"class": "StopViewer"});
+
+		this.extras = new Element("p", {"class": "StopViewer"});
 
 		this.container.appendChild(caption);
 		this.container.appendChild(this.list);
+		this.container.appendChild(this.extras);
 
 		this.get_missing_tags = this._default_get_missing_tags;
 		this.get_invalid_tags = this._default_get_invalid_tags;
@@ -45,10 +50,9 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		}
 		
 		this.list.removeChildren();
-		if (stop === null)
+		if (stop === null) {
 			appendItem.call(this, Text("No Stop Selected"), "", "");
-		else
-		{
+		} else {
 			var missing_tags = this.get_missing_tags(stop); 
 			var invalid_tags = this.get_invalid_tags(stop);
 
@@ -75,9 +79,10 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 				} else {
 					appendItem.call(this, shortened_tag, missing_tags[tag], "MissingTag");
 				}
-
 			}, this);
 		}
+
+		this.update_edit_link();
 	},
 
 	stop_highlighted: function(stop) {
@@ -127,6 +132,20 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 			this.set_stop(this.model.selected_stop);
 		} else {
 			this.set_stop(this.model.highlighted_stop);
+		}
+	},
+
+	update_edit_link: function() {
+		this.extras.removeChildren();
+		if(this.model.selected_stop !== null && (this.model.highlighted_stop === null 
+			|| this.model.selected_stop == this.model.highlighted_stop)) {
+				this.extras.appendChild(Elem("a", {
+					"target": "new",
+					"href": "http://www.openstreetmap.org/edit?lat=" + 
+						this.model.selected_stop.lat + "&lon=" + 
+						this.model.selected_stop.lon + "&zoom=" + 
+						this.model.zoom
+				}, "Edit in Potlatch"));
 		}
 	},
 	

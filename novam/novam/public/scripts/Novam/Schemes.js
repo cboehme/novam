@@ -81,12 +81,12 @@ Novam.schemes = [
 		map_key: {
 			"blue_stop": "Surveyed stop which has no NaPTAN tags",
 			"red_stop": "NaPTAN Stop that has not been checked yet",
-			"purple_stop": "Stop with problems described in the note tag", 
+			"orange_stop": "Stop with problems described in the note tag", 
 			"green_stop": "Stop has been checked and is okay",
 			"grey_stop": "Stop from NaPTAN which is not on the ground",
 			"yellow_stop": "All other stops"
 		},
-		z_order: ["green_stop", "grey_stop", "blue_stop", "yellow_stop", "red_stop", "purple_stop"],
+		z_order: ["green_stop", "grey_stop", "blue_stop", "yellow_stop", "red_stop", "orange_stop"],
 		get_stop_icon: function(stop) {
 
 			if (!("highway" in stop.tags) 
@@ -106,7 +106,7 @@ Novam.schemes = [
 				&& ((!("naptan:verified" in stop.tags) || stop.tags["naptan:verified"] != "no")
 					|| (!("naptan:unverified" in stop.tags) || stop.tags["naptan:unverified"] != "yes"))
 				&& "note" in stop.tags)
-					return "purple_stop";
+					return "orange_stop";
 
 			else if ("highway" in stop.tags
 				&& ((!("naptan:verified" in stop.tags) || stop.tags["naptan:verified"] != "no")

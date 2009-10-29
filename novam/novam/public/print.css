@@ -1,0 +1,30 @@
+@page
+	{ margin: 0cm; }
+
+body
+	{ margin: 0cm; }
+
+h1,
+ul#tools_menu,
+#stopPanel,
+#mapKeyPanel,
+#schemePanel
+	{ display: none; }
+
+#map
+{
+	position: absolute;
+	left: 0cm;
+	right: 0cm;
+	top: 0cm;
+	bottom: 0cm;
+
+	margin: 0px;
+
+	border: none;
+}
+
+.olControlPermalink,
+.olControlLayerSwitcher,
+.olControlPanZoomBar
+	{ display: none; }

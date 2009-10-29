@@ -15,7 +15,7 @@ Novam.schemes = [
 			if ("highway" in stop.tags 
 				&& "naptan:AtcoCode" in stop.tags 
 				&& (!("naptan:unverified" in stop.tags)
-					|| (!("naptan:verified" in stop.tags) || stop.tags["naptan:verified"] == "yes")
+					&& (!("naptan:verified" in stop.tags) || stop.tags["naptan:verified"] == "yes")
 				)
 				&& "route_ref" in stop.tags
 				&& "shelter" in stop.tags)
@@ -166,8 +166,7 @@ Novam.schemes = [
 				|| !("naptan:AtcoCode" in stop.tags)
 				|| ("naptan:unverified" in stop.tags && stop.tags["naptan:unverified"] != "no")
 				|| ("naptan:verified" in stop.tags && stop.tags["naptan:verified"] != "yes")
-				|| !("shelter" in stop.tags) 
-				|| (stop.tags["shelter"] != "no" && stop.tags["shelter"] != "yes")
+				|| ("shelter" in stop.tags && stop.tags["shelter"] != "yes" && stop.tags["shelter"] != "no")
 				)
 					return "orange_stop";
 			else

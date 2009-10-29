@@ -60,7 +60,21 @@ Novam.MapControl = Class.create({
 			transitionEffect: "resize"
 		});
 		this.map.addLayer(mapnik);
-		
+	
+		// Create a öpnvkarte base layer:
+		/* I need to ask if they mind if we use their tiles
+		 * 
+		var public_transport = new OpenLayers.Layer.OSM(
+			"Public Transport Map (from &ouml;pnvkarte.de)", 
+			"http://tile.xn--pnvkarte-m4a.de/tilegen/", {
+			numZoomLevels: 19,
+			buffer: 0,
+			displayOutsideMaxExtent: true,
+			transitionEffect: "resize"
+		});
+		this.map.addLayer(public_transport);
+		*/
+
 		// Install default icon handler:
 		this.get_stop_icon = this._default_get_stop_icon;
 
@@ -103,9 +117,7 @@ Novam.MapControl = Class.create({
 		this.map.addLayer(this.marker_layer);
 
 		this.map.events.register('moveend', this, this.save_map_location);
-		this.map.events.register('moveend', this, this.get_stops);
-		this.map.events.register('moveend', this, 
-			function(evt) { this.model.set_zoom(this.map.getZoom()); });
+		this.map.events.register('moveend', this, this.update_model);
 
 		// Add control for the marker layer:
 		this.feature_control = new Novam.FeatureControl(this.marker_layer);
@@ -170,12 +182,14 @@ Novam.MapControl = Class.create({
 		setCookie("map_location", loc.lat+":"+loc.lon+":"+zoom);
 	},
 
-	get_stops: function() {
+	update_model: function() {
+		var bounds = this.map.getExtent().clone();
+		bounds = bounds.transform(this.map.getProjectionObject(), this.EPSG4326);
+
+		this.model.update_map(bounds, this.map.getZoom());
+
 		if (this.map.getZoom() > 14)
 		{
-			var bounds = this.map.getExtent().clone();
-			bounds = bounds.transform(this.EPSG900913, this.EPSG4326);
-
 			this.map_status.replaceChildren(Text("Loading ..."));
 			this.map_status.show();
 

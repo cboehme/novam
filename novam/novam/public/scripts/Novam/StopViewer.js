@@ -21,7 +21,7 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		this.model.events.register("stop_updated", this, this.stop_updated);
 		this.model.events.register("scheme_selected", this, this.scheme_selected);
 		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
-		this.model.events.register("zoom_changed", this, this.update_edit_link);
+		this.model.events.register("map_changed", this, this.update_edit_links);
 
 		var caption = new Element("h2", {"class": "StopViewer"});
 		caption.appendChild(Text("Bus Stop"));
@@ -82,7 +82,7 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 			}, this);
 		}
 
-		this.update_edit_link();
+		this.update_edit_links();
 	},
 
 	stop_highlighted: function(stop) {
@@ -135,17 +135,31 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		}
 	},
 
-	update_edit_link: function() {
+	update_edit_links: function() {
 		this.extras.removeChildren();
 		if(this.model.selected_stop !== null && (this.model.highlighted_stop === null 
 			|| this.model.selected_stop == this.model.highlighted_stop)) {
-				this.extras.appendChild(Elem("a", {
-					"target": "new",
-					"href": "http://www.openstreetmap.org/edit?lat=" + 
-						this.model.selected_stop.lat + "&lon=" + 
-						this.model.selected_stop.lon + "&zoom=" + 
-						this.model.zoom
-				}, "Edit in Potlatch"));
+				var bounds = this.model.map.bounds.toArray();
+				this.extras.appendChild(Fragment(
+					Elem("a", {
+						"target": "new",
+						"href": "http://www.openstreetmap.org/edit?lat=" + 
+							this.model.selected_stop.lat + "&lon=" + 
+							this.model.selected_stop.lon + "&zoom=" +
+							this.model.map.zoom + "&node=" + 
+							this.model.selected_stop.osm_id
+					}, "Edit in Potlatch"),
+					" | ",
+					Elem("a", {
+						"target": "new",
+						"href": "http://localhost:8111/load_and_zoom?left=" +
+						bounds[0] + "&bottom=" + 
+						bounds[1] + "&right=" +
+						bounds[2] + "&top=" +
+						bounds[3] + "&select=node" +
+						this.model.selected_stop.osm_id
+					}, "Edit in JOSM")
+				));
 		}
 	},
 	

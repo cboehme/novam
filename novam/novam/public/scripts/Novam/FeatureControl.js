@@ -159,7 +159,5 @@ Novam.FeatureControl = OpenLayers.Class(OpenLayers.Control, {
 		this.handlers.feature.setMap(map);
 		this.handlers.drag.setMap(map);
 		OpenLayers.Control.prototype.setMap.apply(this, arguments);
-	},
-	
-	CLASS_NAME: "OpenLayers.Control.SelectFeature"
+	}
 });

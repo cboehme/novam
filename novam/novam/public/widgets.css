@@ -118,6 +118,32 @@ p.StopViewer
 	text-align: right;
 }
 
+object.StopViewer
+{
+	/* display: none does not work here as Opera
+	 * won't attempt to load the object in this 
+	 * case (I have not checked other browsers).
+	 */
+	width: 0px; 
+	height: 0px; 
+}
+
+div.StopViewer.FlashMessage
+{
+	position: absolute;
+	left: 10%;
+	right: 10%;
+	top: 33px;
+
+	border: 1px solid black;
+
+	padding: 5px;
+
+	text-align: center;
+
+	background-color: white;
+}
+
 /*
  * Map Key
  */

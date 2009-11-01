@@ -37,10 +37,16 @@ Novam.SchemeSelector = Class.create(Novam.Widget, {
 
 		Novam.schemes.each(this.model.add_scheme, this.model);
 
-		// Load previous colour scheme:
-		cookie = getCookie("colour_scheme");
-		if (cookie != null) {
-			this.model.select_scheme(cookie);
+		// Load saved scheme:
+		params = OpenLayers.Util.getParameters(location.href);
+		if (params.scheme != undefined) {
+			this.model.select_scheme(params.scheme);
+		} 
+		if (!this.model.selected_scheme) {
+			cookie = getCookie("scheme");
+			if (cookie != null) {
+				this.model.select_scheme(cookie);
+			}
 		}
 	},
 
@@ -53,7 +59,7 @@ Novam.SchemeSelector = Class.create(Novam.Widget, {
 	
 	scheme_selected: function(scheme) {
 		this.selector.value = scheme.id;
-		setCookie("colour_scheme", scheme.id);
+		setCookie("scheme", scheme.id);
 	},
 
 	scheme_unselected: function(scheme) {

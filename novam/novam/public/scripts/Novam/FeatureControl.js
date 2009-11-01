@@ -87,7 +87,6 @@ Novam.FeatureControl = OpenLayers.Class(OpenLayers.Control, {
 			shiftKey: this.handlers.feature.evt.shiftKey,
 			ctrlKey: this.handlers.feature.evt.ctrlKey
 		});
-		this.handlers.feature.evt.stop();
 	},
 
 	onClickout: function (feature) {
@@ -159,5 +158,7 @@ Novam.FeatureControl = OpenLayers.Class(OpenLayers.Control, {
 		this.handlers.feature.setMap(map);
 		this.handlers.drag.setMap(map);
 		OpenLayers.Control.prototype.setMap.apply(this, arguments);
-	}
+	},
+
+	CLASS_NAME: "Novam.FeatureControl"
 });

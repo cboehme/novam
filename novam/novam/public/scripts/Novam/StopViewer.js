@@ -7,6 +7,8 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 	model: null,
 	list: null,
 	extras: null,
+	josm_starter: null,
+	potlatch_window: null,
 	get_missing_tags: null,
 	get_invalid_tags: null,
 
@@ -21,7 +23,6 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		this.model.events.register("stop_updated", this, this.stop_updated);
 		this.model.events.register("scheme_selected", this, this.scheme_selected);
 		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
-		this.model.events.register("map_changed", this, this.update_edit_links);
 
 		var caption = new Element("h2", {"class": "StopViewer"});
 		caption.appendChild(Text("Bus Stop"));
@@ -43,9 +44,13 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 	set_stop: function(stop) {
 
 		function appendItem(key, value, _class) {
+			var attrs = {};
+			if (_class != "") {
+				attrs = {"class": _class};
+			}
 			this.list.appendChild(Fragment(
-				Elem("dt", {"class": _class}, key),
-				Elem("dd", {"class": _class}, value)
+				Elem("dt", attrs, key),
+				Elem("dd", attrs, value)
 			));
 		}
 		
@@ -82,7 +87,18 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 			}, this);
 		}
 
-		this.update_edit_links();
+		this.extras.removeChildren();
+		if(this.model.selected_stop !== null && (this.model.highlighted_stop === null 
+			|| this.model.selected_stop == this.model.highlighted_stop)) {
+
+				var potlatch_link = Elem("a", { "href": "javascript:void" }, "Edit in Potlatch");
+				potlatch_link.observe("click", this.edit_in_potlatch.bind(this));
+
+				var josm_link = Elem("a", { "href": "javascript:void" }, "Edit in JOSM");
+				josm_link.observe("click", this.edit_in_josm.bind(this));
+
+				this.extras.appendChild(Fragment(potlatch_link," | ", josm_link));
+		}
 	},
 
 	stop_highlighted: function(stop) {
@@ -135,31 +151,54 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		}
 	},
 
-	update_edit_links: function() {
-		this.extras.removeChildren();
-		if(this.model.selected_stop !== null && (this.model.highlighted_stop === null 
-			|| this.model.selected_stop == this.model.highlighted_stop)) {
-				var bounds = this.model.map.bounds.toArray();
-				this.extras.appendChild(Fragment(
-					Elem("a", {
-						"target": "new",
-						"href": "http://www.openstreetmap.org/edit?lat=" + 
-							this.model.selected_stop.lat + "&lon=" + 
-							this.model.selected_stop.lon + "&zoom=" +
-							this.model.map.zoom + "&node=" + 
-							this.model.selected_stop.osm_id
-					}, "Edit in Potlatch"),
-					" | ",
-					Elem("a", {
-						"target": "new",
-						"href": "http://localhost:8111/load_and_zoom?left=" +
-						bounds[0] + "&bottom=" + 
-						bounds[1] + "&right=" +
-						bounds[2] + "&top=" +
-						bounds[3] + "&select=node" +
-						this.model.selected_stop.osm_id
-					}, "Edit in JOSM")
-				));
+	edit_in_potlatch: function() {
+		var bounds = this.model.map.bounds.toArray();
+		var url = "http://www.openstreetmap.org/edit?lat=" + 
+			encodeURIComponent(this.model.selected_stop.lat) + "&lon=" + 
+			encodeURIComponent(this.model.selected_stop.lon) + "&zoom=" +
+			encodeURIComponent(this.model.map.zoom) + "&node=" + 
+			encodeURIComponent(this.model.selected_stop.osm_id);
+		
+		if (!this.potlatch_window || this.potlatch_window.closed) {
+			this.potlatch_window = window.open(url, "potlatch_window");
+		} else {
+			if (confirm("Potlatch is already running. If you click OK all unsaved edits will be lost.")) {
+				this.potlatch_window = window.open(url, "potlatch_window");
+			}
+		}
+	},
+
+	edit_in_josm: function() {
+		// Show message to inform user that someting is going on.
+		// It would be nice to link this message with something like
+		// object.onload instead of just timing it.
+		var flash_message = Builder.node("div", {"class": "StopViewer FlashMessage"}, 
+			"Loading bus stop in JOSM ...");
+		this.container.appendChild(flash_message);
+		setTimeout(function() {
+			flash_message.fade({duration: 0.3}); 
+			this.container.removeChild(flash_message);
+		}.bind(this), 1500);
+
+		// Open JOSM remote control link in an object. This way no
+		// empty browser windows will be opened:
+		var bounds = this.model.map.bounds.toArray();
+		var url = "http://localhost:8111/load_and_zoom?left=" +
+			encodeURIComponent(bounds[0]) + "&bottom=" + 
+			encodeURIComponent(bounds[1]) + "&right=" +
+			encodeURIComponent(bounds[2]) + "&top=" +
+			encodeURIComponent(bounds[3]) + "&select=node" +
+			encodeURIComponent(this.model.selected_stop.osm_id);
+
+		if (this.josm_starter == null) {
+			this.josm_starter = Builder.node("object", {
+				"data": url,
+				"type": "text/plain", 
+				"class": "StopViewer"
+			});
+			this.container.appendChild(this.josm_starter);	
+		} else {
+			this.josm_starter.data = url;
 		}
 	},
 	

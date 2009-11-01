@@ -17,8 +17,11 @@ Novam.MapControl = Class.create({
 	map: null,
 	marker_layer: null,
 	feature_control: null,
+	permalink_control: null,
 	map_status: null,
 	get_stop_icon: null,
+	marker_z_order: null,
+	_default_marker_z_order: ["grey_icon"],
 
 	initialize: function(container, model) {
 
@@ -35,13 +38,13 @@ Novam.MapControl = Class.create({
 		this.model.events.register("scheme_selected", this, this.scheme_selected);
 		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
 
+		// Create map and basic controls:
 		var restrictedExtent = new OpenLayers.Bounds(-11.6, 49.6, 3.6, 61.3);
 		this.map = new OpenLayers.Map(container, {
 			controls: [
 				new OpenLayers.Control.Navigation(),
 				new OpenLayers.Control.PanZoomBar(),
-				new OpenLayers.Control.LayerSwitcher(),
-				new OpenLayers.Control.Permalink()
+				new OpenLayers.Control.LayerSwitcher()
 			],
 			units: 'm',
 			projection: this.EPSG900913,
@@ -49,13 +52,17 @@ Novam.MapControl = Class.create({
 			restrictedExtent: restrictedExtent.transform(this.EPSG4326, this.EPSG900913)
 		});
 
+		this.permalink_control = new OpenLayers.Control.Permalink()
+		this.map.addControl(this.permalink_control);
+		this.permalink_control.activate();
+
 		// Create load indicator:
 		this.map_status = new Element("div", {"class": "MapStatus"});
 		$(container).appendChild(this.map_status);
 		this.map_status.hide();
 		
 		// Create a mapnik base layer:
-		var mapnik = new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap", {
+		var mapnik = new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap (Mapnik)", {
 			displayOutsideMaxExtent: true,
 			transitionEffect: "resize"
 		});
@@ -75,49 +82,23 @@ Novam.MapControl = Class.create({
 		this.map.addLayer(public_transport);
 		*/
 
-		// Install default icon handler:
+		// Set default marker scheme:
 		this.get_stop_icon = this._default_get_stop_icon;
-
-		// Define styling for the marker layer:
-		var styleMap = new OpenLayers.StyleMap({
-			"default": new OpenLayers.Style({
-				graphicHeight: 16,
-				graphicWidth: 16,
-				graphicXOffset: -8,
-				graphicYOffset: -8,
-				externalGraphic: "${icon}${selected}${marked}${highlighted}.png",
-				cursor: "pointer"
-			})
-		});
-		
-		var highlightedLookup = {
-			"_highlighted": {
-				graphicHeight: 22,
-				graphicWidth: 22,
-				graphicXOffset: -11,
-				graphicYOffset: -11
-			},
-			"": {}
-		};
-		styleMap.addUniqueValueRules("default", "highlighted", highlightedLookup);
-
-		var selectedLookup = {
-			"_selected": {
-				cursor: ""
-			},
-			"": {}
-		};
-		styleMap.addUniqueValueRules("default", "selected", selectedLookup);
+		this.marker_z_order = this._default_marker_z_order;
 
 		// Create the marker layer:
-		this.marker_layer = new OpenLayers.Layer.Vector('Markers', {
-			styleMap: styleMap,
-			transitionEffect: "resize"
+		this.marker_layer = new OpenLayers.Layer.Vector("Bus Stops", {
+			transitionEffect: "resize",
+			displayInLayerSwitcher: false,
+			rendererOptions: {zIndexing: true}
 		});
 		this.map.addLayer(this.marker_layer);
 
-		this.map.events.register('moveend', this, this.save_map_location);
-		this.map.events.register('moveend', this, this.update_model);
+		this._set_marker_style();
+
+		this.map.events.register("moveend", this, this.update_cookie);
+		this.map.events.register("moveend", this, this.update_model);
+		this.map.events.register("changelayer", this, this.update_cookie);
 
 		// Add control for the marker layer:
 		this.feature_control = new Novam.FeatureControl(this.marker_layer);
@@ -144,20 +125,26 @@ Novam.MapControl = Class.create({
 		// Load previous map location:
 		var loc = new OpenLayers.LonLat(-2.9, 54.7);
 		var zoom = 5;
-		cookie = getCookie("map_location");
+		var layers = "BT";
+		cookie = getCookie("map_state");
 		if (cookie != null) {
 			v = cookie.split(":");
-			loc.lat = Number(v[0]);
-			loc.lon = Number(v[1]);
-			zoom = Number(v[2]);
+			if (v.length == 4) {
+				loc.lat = Number(v[0]);
+				loc.lon = Number(v[1]);
+				zoom = Number(v[2]);
+				layers = v[3];
+			}
 		}
-		// Only set the location if no position provided in 
-		// the url (which is handled by the ArgParser control:
-		if (location.search == "") {
+		if (!this.map.getCenter()) {
 			this.map.setCenter(loc.transform(
 				this.EPSG4326, this.map.getProjectionObject()), zoom);
+			this._set_layer_visibility(layers);
 		} else {
-			this.map.events.triggerEvent("moveend");
+			// ArgParser centres the map before our event handlers
+			// are installed. So, we call the methods manually now:
+			this.update_cookie();
+			this.update_model();
 		}
 	},
 
@@ -169,17 +156,18 @@ Novam.MapControl = Class.create({
 		this.model = null;
 	},
 
-	save_map_location: function() {
+	update_cookie: function() {
 		var loc = this.map.getCenter().clone().transform(
 			this.map.getProjectionObject(), this.EPSG4326);
 		var zoom = this.map.getZoom();
+		var layers = this._get_layer_visibility();
 
 		var decimals = Math.pow(10, Math.floor(zoom/3));
 
 		loc.lat = Math.round(loc.lat * decimals) / decimals;
 		loc.lon = Math.round(loc.lon * decimals) / decimals;
 
-		setCookie("map_location", loc.lat+":"+loc.lon+":"+zoom);
+		setCookie("map_state", [ loc.lat, loc.lon, zoom, layers].join(":"));
 	},
 
 	update_model: function() {
@@ -291,12 +279,18 @@ Novam.MapControl = Class.create({
 
 	scheme_selected: function(scheme) {
 		this.get_stop_icon = scheme.get_stop_icon;
-		this._update_stop_icons();
+		this.marker_z_order = scheme.z_order;
+		this._set_marker_style();
+		this._update_stop_markers();
+		this._update_permalink(scheme.id);
 	},
 
 	scheme_unselected: function(scheme) {
 		this.get_stop_icon = this._default_get_stop_icon;
-		this._update_stop_icons();
+		this.marker_z_order = this._default_marker_z_order;
+		this._set_marker_style();
+		this._update_stop_markers();
+		this._update_permalink(null);
 	},
 
 	_find_stop: function(id) {
@@ -304,12 +298,98 @@ Novam.MapControl = Class.create({
 			return feature.attributes.id == id; 
 		});
 	},
+	
+	_set_marker_style: function() {
+		var styleMap = new OpenLayers.StyleMap({
+			"default": new OpenLayers.Style({
+				graphicHeight: 16,
+				graphicWidth: 16,
+				graphicXOffset: -8,
+				graphicYOffset: -8,
+				externalGraphic: "${icon}${selected}${highlighted}.png",
+				cursor: "pointer"
+			})
+		});
 
-	_update_stop_icons: function() {
+		var iconLookup = {};
+		for (var i = 0; i < this.marker_z_order.length; ++i) {
+			iconLookup[this.marker_z_order[i]] = { graphicZIndex: i + 1 };
+		};
+		styleMap.addUniqueValueRules("default", "icon", iconLookup);
+		
+		var highlightedLookup = {
+			"_highlighted": {
+				graphicHeight: 22,
+				graphicWidth: 22,
+				graphicXOffset: -11,
+				graphicYOffset: -11,
+				graphicZIndex: this.marker_z_order.length + 2
+			},
+			"": {}
+		};
+		styleMap.addUniqueValueRules("default", "highlighted", highlightedLookup);
+
+		var selectedLookup = {
+			"_selected": {
+				cursor: "",
+				graphicZIndex: this.marker_z_order.length + 1
+			},
+			"": {}
+		};
+		styleMap.addUniqueValueRules("default", "selected", selectedLookup);
+
+		this.marker_layer.styleMap = styleMap;
+	},
+
+	_update_stop_markers: function() {
 		this.marker_layer.features.each(function(stop) {
 			 stop.attributes.icon = this.get_stop_icon(this.model.stops.get(stop.attributes.id));
 			 this.marker_layer.drawFeature(stop);
 		}, this);
+	},
+
+	_update_permalink: function(scheme_id) {
+		var href = location.href;
+		if (href.indexOf("?") != -1) {
+			ref = href.substring(0, href.indexOf("?"));
+		}
+
+		var params = OpenLayers.Util.getParameters(href);
+		params.scheme = scheme_id;
+		href += '?' + OpenLayers.Util.getParameterString(params);
+
+		this.permalink_control.base = href;
+		this.permalink_control.updateLink();
+	},
+
+	_get_layer_visibility: function() {
+		layers = "";
+		for(var i = 0; i < this.map.layers.length; ++i) {
+			var layer = this.map.layers[i];
+
+			if (layer.isBaseLayer) {
+				layers += (layer == this.map.baseLayer) ? "B" : "0";
+			} else {
+				layers += (layer.getVisibility()) ? "T" : "F";
+			}
+		}
+		return layers;
+	},
+
+	_set_layer_visibility: function(layers) {
+		if (layers.length == this.map.layers.length) {
+			for(var i = 0; i < layers.length; ++i) {
+
+				var layer = this.map.layers[i];
+				var c = layers.charAt(i);
+
+				if (c == "B") {
+					this.map.setBaseLayer(layer);
+				} else if ((c == "T") || (c == "F")) {
+					layer.setVisibility(c == "T");
+				}
+			}
+		}
 	},
 
 	_default_get_stop_icon: function(stop) {

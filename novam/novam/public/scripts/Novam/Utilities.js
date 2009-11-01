@@ -22,7 +22,10 @@ uniqueId.nextId = 0;
  */
 function setCookie(name, value)
 {
-	document.cookie = name+"="+escape(value)+";";
+	var expires = new Date();
+	expires.setTime(expires.getTime() + 1000 * 86400 * 60);  // Cookie will expire in 60 days
+
+	document.cookie = name + "=" + escape(value) + "; expires=" + expires.toGMTString();
 }
 
 function getCookie(name)

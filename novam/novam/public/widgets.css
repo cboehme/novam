@@ -208,7 +208,15 @@ fieldset.SchemeSelector select
  */
 
 #map
-	{ border: 1px solid #babdb6; }
+{
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+
+	border: 1px solid #babdb6; 
+}
 
 /* For some reason the slider image has a top offset of 6px which results in 
  * a displacement of the slider on the zoombar. Setting vertical-align to top 

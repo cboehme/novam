@@ -11,20 +11,19 @@ ul#tools_menu,
 #schemePanel
 	{ display: none; }
 
-#map
+#mapPanel
 {
-	position: absolute;
-	left: 0cm;
-	right: 0cm;
-	top: 0cm;
-	bottom: 0cm;
+	width: 29.7cm;
+	height: 21cm;
 
-	margin: 0px;
+	margin: 0cm;
+	padding: 0cm;
 
 	border: none;
 }
 
 .olControlPermalink,
 .olControlLayerSwitcher,
-.olControlPanZoomBar
-	{ display: none; }
+.olControlPanZoomBar,
+.MapStatus
+	{ display: none !important; }

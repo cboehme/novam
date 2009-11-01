@@ -9,6 +9,7 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 	extras: null,
 	josm_starter: null,
 	potlatch_window: null,
+	flash_message: null,
 	get_missing_tags: null,
 	get_invalid_tags: null,
 
@@ -172,13 +173,13 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		// Show message to inform user that someting is going on.
 		// It would be nice to link this message with something like
 		// object.onload instead of just timing it.
-		var flash_message = Builder.node("div", {"class": "StopViewer FlashMessage"}, 
-			"Loading bus stop in JOSM ...");
-		this.container.appendChild(flash_message);
-		setTimeout(function() {
-			flash_message.fade({duration: 0.3}); 
-			this.container.removeChild(flash_message);
-		}.bind(this), 1500);
+		if (this.flash_message == null) {
+			this.flash_message = Builder.node("div", {"class": "StopViewer FlashMessage"}, 
+				"Loading bus stop in JOSM ...");
+			this.container.appendChild(this.flash_message);
+		}
+		this.flash_message.show();
+		this.flash_message.fade({delay: 1.5, duration: 0.3});
 
 		// Open JOSM remote control link in an object. This way no
 		// empty browser windows will be opened:

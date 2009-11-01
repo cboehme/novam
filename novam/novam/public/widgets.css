@@ -214,7 +214,7 @@ fieldset.SchemeSelector select
  * a displacement of the slider on the zoombar. Setting vertical-align to top 
  * solves this issue. However it should not be neccessary in the first place!
  */
-img[src="scripts/img/slider.png"]
+img[src="scripts/OpenLayers/img/slider.png"]
 	{ vertical-align: top; }
 
 #map_OpenLayers_ViewPort
@@ -223,8 +223,8 @@ img[src="scripts/img/slider.png"]
 div.MapStatus
 {
 	position: absolute;
-	left: 40%;
-	right: 40%;
+	left: 30%;
+	right: 30%;
 	top: 15px;
 
 	padding: 5px;
@@ -232,6 +232,8 @@ div.MapStatus
 	border: 1px solid black;
 
 	background-color: white;
+
+	text-align: center;
 
 	z-index: 1;
 }

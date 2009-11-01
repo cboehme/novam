@@ -72,7 +72,7 @@
      borderopacity="1.0"
      id="base"
      inkscape:current-layer="svg2103"
-     inkscape:cx="4.7113381"
+     inkscape:cx="3.1783508"
      inkscape:cy="7.8896157"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
@@ -155,7 +155,7 @@
        sodipodi:type="inkscape:persp3d" />
   </defs>
   <rect
-     style="opacity:1;color:#000000;fill:#ef2929;fill-opacity:1;fill-rule:evenodd;stroke:#a40000;stroke-width:0.99999987999999995;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     style="opacity:1;color:#000000;fill:#fce94f;fill-opacity:1;fill-rule:evenodd;stroke:#c4a000;stroke-width:0.99999987999999995;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
      id="rect3802"
      width="9"
      height="9"
@@ -164,20 +164,12 @@
      transform="scale(-1,-1)"
      ry="2"
      rx="2"
-     inkscape:export-filename="/home/christoph/projekte/Naptan/novam/novam/novam/public/red_stop_selected.png"
+     inkscape:export-filename="/home/christoph/projekte/Naptan/novam/novam/novam/public/yellow_bearing_N.png"
      inkscape:export-xdpi="144"
      inkscape:export-ydpi="144" />
   <path
-     d=""
-     id="path2125"
-     style="fill:#ffffff;stroke:none" />
-  <path
-     d=""
-     id="path2131"
-     style="fill:#ffffff;stroke:none" />
-  <path
      sodipodi:type="star"
-     style="opacity:1;color:#000000;fill:#a40000;fill-opacity:1;fill-rule:evenodd;stroke:#a40000;stroke-width:1.25473547;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+     style="opacity:1;color:#000000;fill:#2e3436;fill-opacity:1;fill-rule:evenodd;stroke:#2e3436;stroke-width:1.25473546999999996;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
      id="path3491"
      sodipodi:sides="3"
      sodipodi:cx="-11.119584"
@@ -190,5 +182,16 @@
      inkscape:rounded="0"
      inkscape:randomized="0"
      d="M -8.1556568,3.9018654 L -14.083511,3.9018654 L -11.119584,-1.2318072 L -8.1556568,3.9018654 z"
-     transform="matrix(-0.7992256,0,0,0.7947422,-0.8870565,6.9389958)" />
+     transform="matrix(-0.7992255,0,0,0.7947422,-0.8870552,6.9389961)"
+     inkscape:export-filename="/home/christoph/projekte/Naptan/novam/novam/novam/public/yellow_bearing_N.png"
+     inkscape:export-xdpi="144"
+     inkscape:export-ydpi="144" />
+  <path
+     d=""
+     id="path2125"
+     style="fill:#ffffff;stroke:none" />
+  <path
+     d=""
+     id="path2131"
+     style="fill:#ffffff;stroke:none" />
 </svg>

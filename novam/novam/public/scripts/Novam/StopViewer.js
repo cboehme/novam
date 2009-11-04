@@ -92,10 +92,10 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		if(this.model.selected_stop !== null && (this.model.highlighted_stop === null 
 			|| this.model.selected_stop == this.model.highlighted_stop)) {
 
-				var potlatch_link = Elem("a", { "href": "javascript:void" }, "Edit in Potlatch");
+				var potlatch_link = Elem("a", { "href": "javascript:void(0);" }, "Edit in Potlatch");
 				potlatch_link.observe("click", this.edit_in_potlatch.bind(this));
 
-				var josm_link = Elem("a", { "href": "javascript:void" }, "Edit in JOSM");
+				var josm_link = Elem("a", { "href": "javascript:void(0);" }, "Edit in JOSM");
 				josm_link.observe("click", this.edit_in_josm.bind(this));
 
 				this.extras.appendChild(Fragment(potlatch_link," | ", josm_link));

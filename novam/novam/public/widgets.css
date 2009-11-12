@@ -46,6 +46,13 @@ h2
  * StopViewer
  */
 
+h2.StopViewer img
+{
+	margin-right: 5px;
+
+	vertical-align: middle;
+}
+
 dl.StopViewer
 {
 	position: absolute;
@@ -191,6 +198,14 @@ dl.MapKey dd
 	margin-bottom: 7px;
 
 	width: auto;
+}
+
+p.MapKey
+{
+	margin-left: 40px;
+	margin-top: 20px;
+
+	font-size: small;
 }
 
 /*

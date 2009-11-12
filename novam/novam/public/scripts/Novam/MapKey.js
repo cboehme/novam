@@ -25,6 +25,7 @@ Novam.MapKey = Class.create(Novam.Widget, {
 	
 	model: null,
 	list: null,
+	notes: null,
 
 	initialize: function(model) {
 		Novam.Widget.prototype.initialize.call(this);
@@ -32,14 +33,18 @@ Novam.MapKey = Class.create(Novam.Widget, {
 		this.model = model;
 		this.model.events.register("scheme_selected", this, this.scheme_selected);
 		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
+		this.model.events.register("map_changed", this, this.update_timestamp);
 
 		var caption = new Element("h2", {"class": "MapKey"});
 		caption.appendChild(Text("Map Key"));
 		
 		this.list = new Element("dl", {"class": "MapKey"});
 
+		this.notes = new Element("p", {"class": "MapKey"});
+
 		this.container.appendChild(caption);
 		this.container.appendChild(this.list);
+		this.container.appendChild(this.notes);
 
 		// Set default contents:
 		this.scheme_unselected(null);
@@ -70,5 +75,9 @@ Novam.MapKey = Class.create(Novam.Widget, {
 		this.list.removeChildren();
 		this.list.appendChild(new Element("dt"));
 		this.list.appendChild(dd);
+	},
+
+	update_timestamp: function(map) {
+		this.notes.replaceChildren(Text("Bus stops last updated: " + map.timestamp));
 	}
 });

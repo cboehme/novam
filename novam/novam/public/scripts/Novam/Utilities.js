@@ -99,28 +99,12 @@ function Text(str)
 	return document.createTextNode(str);
 }
 
-function Elem(name, attrs)
-{
-	var element = new Element(name, attrs);
-	var args = [];
-	for (var i = 2; i < arguments.length; ++i) {
-		args.push(arguments[i]);
-	}
-	element.appendChild(concatElements.apply(this, args));
-	return element;
-}
-
-function Fragment()
-{
-	return concatElements.apply(this, arguments);
-}
-
 function concatElements()
 {
 	var fragment = document.createDocumentFragment();
 	for (var i = 0; i < arguments.length; ++i)
 	{
-		if (typeof(arguments[i]) == 'string')
+		if (typeof(arguments[i]) === "string")
 			fragment.appendChild(Text(arguments[i]));
 		else
 			fragment.appendChild(arguments[i]);

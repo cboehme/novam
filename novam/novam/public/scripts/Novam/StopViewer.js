@@ -24,11 +24,13 @@
 Novam.StopViewer = Class.create(Novam.Widget, {
 	
 	model: null,
+	caption_icon: null,
 	list: null,
 	extras: null,
 	josm_starter: null,
 	potlatch_window: null,
 	flash_message: null,
+	get_stop_icon: null,
 	get_missing_tags: null,
 	get_invalid_tags: null,
 
@@ -44,7 +46,11 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		this.model.events.register("scheme_selected", this, this.scheme_selected);
 		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
 
+		this.caption_icon = new Element("img", {"alt": "Bus stop icon"});
+
 		var caption = new Element("h2", {"class": "StopViewer"});
+
+		caption.appendChild(this.caption_icon);
 		caption.appendChild(Text("Bus Stop"));
 
 		this.list = new Element("dl", {"class": "StopViewer"});
@@ -55,6 +61,7 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		this.container.appendChild(this.list);
 		this.container.appendChild(this.extras);
 
+		this.get_stop_icon = this._default_get_stop_icon;
 		this.get_missing_tags = this._default_get_missing_tags;
 		this.get_invalid_tags = this._default_get_invalid_tags;
 
@@ -68,15 +75,16 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 			if (_class != "") {
 				attrs = {"class": _class};
 			}
-			this.list.appendChild(Fragment(
-				Elem("dt", attrs, key),
-				Elem("dd", attrs, value)
+			this.list.appendChild(concatElements(
+				Builder.node("dt", attrs, key),
+				Builder.node("dd", attrs, value)
 			));
 		}
 		
 		this.list.removeChildren();
 		if (stop === null) {
-			appendItem.call(this, Text("No Stop Selected"), "", "");
+			appendItem.call(this, "No Stop Selected", "", "");
+			this.caption_icon.src = this._default_get_stop_icon() + ".png";
 		} else {
 			var missing_tags = this.get_missing_tags(stop); 
 			var invalid_tags = this.get_invalid_tags(stop);
@@ -86,17 +94,17 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 			tags.sort();
 
 			tags.each(function(tag) {
-				var shortened_tag = Text(tag);
+				var shortened_tag = tag;
 				if (tag.substring(0,7) == "naptan:") {
-					shortened_tag = Fragment(
-						Elem("span", {"class": "TagPrefix"}, "n:"),
+					shortened_tag = [ 
+						Builder.node("span", {"class": "TagPrefix"}, "n:"),
 						tag.substring(7)
-					);
+					];
 				} 
 
 				if(tag in stop.tags) {
 					if (tag in invalid_tags) {
-						appendItem.call(this, shortened_tag.cloneNode(true), stop.tags[tag], "InvalidTag");
+						appendItem.call(this, shortened_tag.clone(), stop.tags[tag], "InvalidTag");
 						appendItem.call(this, shortened_tag, invalid_tags[tag], "InvalidTagRemark");
 					} else {
 						appendItem.call(this, shortened_tag, stop.tags[tag], "");
@@ -105,19 +113,21 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 					appendItem.call(this, shortened_tag, missing_tags[tag], "MissingTag");
 				}
 			}, this);
+
+			this.caption_icon.src = this.get_stop_icon(stop) + ".png";
 		}
 
 		this.extras.removeChildren();
 		if(this.model.selected_stop !== null && (this.model.highlighted_stop === null 
 			|| this.model.selected_stop == this.model.highlighted_stop)) {
 
-				var potlatch_link = Elem("a", { "href": "javascript:void(0);" }, "Edit in Potlatch");
+				var potlatch_link = Builder.node("a", { "href": "javascript:void(0);" }, "Edit in Potlatch");
 				potlatch_link.observe("click", this.edit_in_potlatch.bind(this));
 
-				var josm_link = Elem("a", { "href": "javascript:void(0);" }, "Edit in JOSM");
+				var josm_link = Builder.node("a", { "href": "javascript:void(0);" }, "Edit in JOSM");
 				josm_link.observe("click", this.edit_in_josm.bind(this));
 
-				this.extras.appendChild(Fragment(potlatch_link," | ", josm_link));
+				this.extras.appendChild(concatElements(potlatch_link," | ", josm_link));
 		}
 	},
 
@@ -148,6 +158,7 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 	},
 
 	scheme_selected: function(scheme) {
+		this.get_stop_icon = scheme.get_stop_icon;
 		this.get_missing_tags = scheme.get_missing_tags;
 		this.get_invalid_tags = scheme.get_invalid_tags;
 
@@ -160,6 +171,7 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 	},
 	
 	scheme_unselected: function(scheme) {
+		this.get_stop_icon = this._default_get_stop_icon;
 		this.get_missing_tags = this._default_get_missing_tags;
 		this.get_invalid_tags = this._default_get_invalid_tags;
 
@@ -220,6 +232,10 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		} else {
 			this.josm_starter.data = url;
 		}
+	},
+
+	_default_get_stop_icon: function(stop) {
+		return "grey_stop";
 	},
 	
 	_default_get_missing_tags: function(stop) {

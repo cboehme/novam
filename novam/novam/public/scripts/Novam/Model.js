@@ -58,6 +58,7 @@ Novam.Model = Class.create({
 		this.unselect_scheme();
 		this.selected_scheme = null;
 		this.schemes = null;
+		this.map = null;
 
 		this.zoom = null;
 
@@ -235,11 +236,20 @@ Novam.Model = Class.create({
 		}
 	},
 
-	update_map: function(bounds, zoom) {
+	update_map: function(bounds, zoom, timestamp) {
+		if (arguments.length < 3) {
+			if (this.map !== null) {
+				timestamp = this.map.timestamp;
+			} else {
+				timestamp = null;
+			}
+		}
+
 		this.map = {
 			"bounds": bounds,
-			"zoom": zoom
+			"zoom": zoom,
+			"timestamp": timestamp
 		};
-		this.events.triggerEvent("map_changed", bounds, zoom);
+		this.events.triggerEvent("map_changed", this.map);
 	}
 });

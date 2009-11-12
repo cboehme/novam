@@ -210,6 +210,7 @@ Novam.MapControl = Class.create({
 					data.stops.each(function (stop) {
 						this.model.add_stop(stop);
 					}, this);
+					this.model.update_map(bounds, this.map.getZoom(), data.timestamp);
 					this.map_status.hide();
 				}
 			});
@@ -222,7 +223,7 @@ Novam.MapControl = Class.create({
 					&& !this.model.is_stop_selected(stop.attributes.id)
 					&& !this.model.is_stop_highlighted(stop.attributes.id)
 					&& !this.model.is_stop_marked(stop.attributes.id)) {
-					remove_features.push(stop.attributes.id);
+						remove_features.push(stop.attributes.id);
 				}
 			}, this);
 			remove_features.each(this.model.remove_stop, this.model);

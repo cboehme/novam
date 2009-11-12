@@ -147,7 +147,7 @@ class OsmdataController(BaseController):
 				"tags": tags_struct
 			})
 
-		return {"stops": stops_struct}
+		return {"stops": stops_struct, "timestamp": str(model.planet_timestamp.get())}
 
 	@jsonify
 	def show(self, id):

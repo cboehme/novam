@@ -37,6 +37,8 @@ Novam.MapControl = Class.create({
 	marker_layer: null,
 	feature_control: null,
 	permalink_control: null,
+	permalink_params: null,
+	initial_selection: null,
 	map_status: null,
 	get_stop_icon: null,
 	marker_z_order: null,
@@ -71,9 +73,11 @@ Novam.MapControl = Class.create({
 			restrictedExtent: restrictedExtent.transform(this.EPSG4326, this.EPSG900913)
 		});
 
-		this.permalink_control = new OpenLayers.Control.Permalink()
+		this.permalink_control = new OpenLayers.Control.Permalink(null, null, {
+			eventListeners: {"click": function(e) { alert("Test"); OpenLayers.Event.stop(e ? e: window.event); }}});
 		this.map.addControl(this.permalink_control);
 		this.permalink_control.activate();
+		this.permalink_params = new Hash();
 
 		// Create load indicator:
 		this.map_status = new Element("div", {"class": "MapStatus"});
@@ -165,12 +169,23 @@ Novam.MapControl = Class.create({
 			this.update_cookie();
 			this.update_model();
 		}
+		
+		// Select stop from url:
+		params = OpenLayers.Util.getParameters(location.href);
+		if (params.stop != undefined) {
+			// Stop selection must be postponed until the bus stops
+			// are loaded. Thus, we save it here and select the stop
+			// later in update_model():
+			this.initial_selection = params.stop;
+		} 
 	},
 
 	destroy: function() {
 		this.map = null;
 		this.marker_layer = null;
 		this.feature_control = null;
+		this.permalink_control = null;
+		this.permalink_params = null;
 		this.map_status = null;
 		this.model = null;
 	},
@@ -212,6 +227,11 @@ Novam.MapControl = Class.create({
 					}, this);
 					this.model.update_map(bounds, this.map.getZoom(), data.timestamp);
 					this.map_status.hide();
+					
+					if (this.initial_selection != null) {
+						this.model.select_stop(this.initial_selection);
+						this.initial_selection = null;
+					}
 				}
 			});
 			
@@ -277,12 +297,14 @@ Novam.MapControl = Class.create({
 		var feature = this._find_stop(stop.id);
 		feature.attributes.selected = this.SELECTED;
 		this.marker_layer.drawFeature(feature);
+		this._update_permalink({stop: stop.id});
 	},
 
 	stop_unselected: function(stop) {
 		var feature = this._find_stop(stop.id);
 		feature.attributes.selected = this.UNSELECTED;
 		this.marker_layer.drawFeature(feature);
+		this._update_permalink({stop: undefined});
 	},
 
 	stop_marked: function(stop) {
@@ -302,7 +324,7 @@ Novam.MapControl = Class.create({
 		this.marker_z_order = scheme.z_order;
 		this._set_marker_style();
 		this._update_stop_markers();
-		this._update_permalink(scheme.id);
+		this._update_permalink({scheme: scheme.id});
 	},
 
 	scheme_unselected: function(scheme) {
@@ -310,7 +332,7 @@ Novam.MapControl = Class.create({
 		this.marker_z_order = this._default_marker_z_order;
 		this._set_marker_style();
 		this._update_stop_markers();
-		this._update_permalink(null);
+		this._update_permalink({scheme: undefined});
 	},
 
 	_find_stop: function(id) {
@@ -368,15 +390,16 @@ Novam.MapControl = Class.create({
 		}, this);
 	},
 
-	_update_permalink: function(scheme_id) {
+	_update_permalink: function(new_params) {
 		var href = location.href;
 		if (href.indexOf("?") != -1) {
-			ref = href.substring(0, href.indexOf("?"));
+			href = href.substring(0, href.indexOf("?"));
 		}
 
-		var params = OpenLayers.Util.getParameters(href);
-		params.scheme = scheme_id;
-		href += '?' + OpenLayers.Util.getParameterString(params);
+		this.permalink_params.update(new_params);
+		var params = $H(OpenLayers.Util.getParameters(location.href));
+		params.update(this.permalink_params);
+		href += '?' + OpenLayers.Util.getParameterString(params.toObject());
 
 		this.permalink_control.base = href;
 		this.permalink_control.updateLink();

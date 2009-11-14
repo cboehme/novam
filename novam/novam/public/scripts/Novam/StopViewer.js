@@ -76,8 +76,8 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 				attrs = {"class": _class};
 			}
 			this.list.appendChild(concatElements(
-				Builder.node("dt", attrs, key),
-				Builder.node("dd", attrs, value)
+				Builder.node("dt", attrs, [key]),
+				Builder.node("dd", attrs, [value])
 			));
 		}
 		
@@ -94,17 +94,17 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 			tags.sort();
 
 			tags.each(function(tag) {
-				var shortened_tag = tag;
+				var shortened_tag = Text(tag);
 				if (tag.substring(0,7) == "naptan:") {
-					shortened_tag = [ 
+					shortened_tag = concatElements( 
 						Builder.node("span", {"class": "TagPrefix"}, "n:"),
 						tag.substring(7)
-					];
+					);
 				} 
 
 				if(tag in stop.tags) {
 					if (tag in invalid_tags) {
-						appendItem.call(this, shortened_tag.clone(), stop.tags[tag], "InvalidTag");
+						appendItem.call(this, shortened_tag.cloneNode(true), stop.tags[tag], "InvalidTag");
 						appendItem.call(this, shortened_tag, invalid_tags[tag], "InvalidTagRemark");
 					} else {
 						appendItem.call(this, shortened_tag, stop.tags[tag], "");

@@ -160,6 +160,17 @@ Novam.MapControl = Class.create({
 			this.model.unhighlight_stop();
 		});
 		
+		// Select stop from url:
+		params = OpenLayers.Util.getParameters(location.href);
+		if (params.stop != undefined) {
+			// Stop selection must be postponed until the bus stops
+			// are loaded. Thus, we save it here and select the stop
+			// later in update_model():
+			this.initial_selection = params.stop;
+		} else {
+			this.initial_selection = null;
+		}
+		
 		// Load previous map location:
 		var loc = new OpenLayers.LonLat(-2.9, 54.7);
 		var zoom = 5;
@@ -184,15 +195,6 @@ Novam.MapControl = Class.create({
 			this.update_cookie();
 			this.update_model();
 		}
-		
-		// Select stop from url:
-		params = OpenLayers.Util.getParameters(location.href);
-		if (params.stop != undefined) {
-			// Stop selection must be postponed until the bus stops
-			// are loaded. Thus, we save it here and select the stop
-			// later in update_model():
-			this.initial_selection = params.stop;
-		} 
 	},
 
 	destroy: function() {

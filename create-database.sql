@@ -13,7 +13,7 @@ CREATE INDEX stops_lat_lon_idx ON stops (lat, lon);
 CREATE INDEX stops_lon_lat_idx ON stops (lon, lat);
 CREATE INDEX stops_osm_id_osm_version_idx ON stops (osm_id, osm_version);
 
-CREATE TABLE Tags (
+CREATE TABLE tags (
 	stop_id INTEGER NOT NULL
 		REFERENCES stops(id) ON DELETE CASCADE,
 	name VARCHAR(255) NOT NULL,

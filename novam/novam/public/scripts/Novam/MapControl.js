@@ -73,11 +73,26 @@ Novam.MapControl = Class.create({
 			restrictedExtent: restrictedExtent.transform(this.EPSG4326, this.EPSG900913)
 		});
 
-		this.permalink_control = new OpenLayers.Control.Permalink(null, null, {
-			eventListeners: {"click": function(e) { alert("Test"); OpenLayers.Event.stop(e ? e: window.event); }}});
+		// Add permalink control:
+		this.permalink_control = new OpenLayers.Control.Permalink();
 		this.map.addControl(this.permalink_control);
 		this.permalink_control.activate();
 		this.permalink_params = new Hash();
+
+		// Add a click handler to the permalink element which stops
+		// the event from falling through to the map. This would cause
+		// an unselect event on the marker layer which would remove 
+		// the currently selected stop from the permalink before the 
+		// browser has a chance to  follow it. Since the click is not 
+		// propagated anymore we need to simulate "clicking" on the link
+		// by setting the new location manually:
+		OpenLayers.Event.observe($$("." + this.permalink_control.displayClass + " a")[0], 
+			"click", function(e) {
+				location.href = OpenLayers.Event.element(e ? e : window.event).href;
+				OpenLayers.Event.stop(e ? e : window.event);
+				return false;
+			}
+		);
 
 		// Create load indicator:
 		this.map_status = new Element("div", {"class": "MapStatus"});

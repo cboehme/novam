@@ -55,18 +55,14 @@ Novam.schemes = [
 
 			if ("highway" in stop.tags 
 				&& "naptan:AtcoCode" in stop.tags 
-				&& (!("naptan:unverified" in stop.tags)
-					&& (!("naptan:verified" in stop.tags) || stop.tags["naptan:verified"] == "yes")
-				)
+				&& !("naptan:verified" in stop.tags)
 				&& "route_ref" in stop.tags
 				&& "shelter" in stop.tags)
 					return "green"+icon;
 
 			else if (!("highway" in stop.tags)
 				&& "naptan:AtcoCode" in stop.tags 
-				&& ("naptan:unverified" in stop.tags 
-					|| ("naptan:verified" in stop.tags && stop.tags["naptan:verified"] == "no")
-				))
+				&& "naptan:verified" in stop.tags)
 					return "blue"+icon;
 
 			else if ("highway" in stop.tags
@@ -101,11 +97,8 @@ Novam.schemes = [
 		get_invalid_tags: function(stop) {
 			tags = {};
 
-			if ("naptan:unverified" in stop.tags && stop.tags["naptan:unverified"] != "no")
-				tags["naptan:unverified"] = "Delete this tag or set it to \u2018no\u2019";
-
-			if ("naptan:verified" in stop.tags && stop.tags["naptan:verified"] != "yes")
-				tags["naptan:verified"] = "Delete this tag or set it to \u2018yes\u2019";
+			if ("naptan:verified" in stop.tags)
+				tags["naptan:verified"] = "Delete this tag once the stop has been verified on the ground";
 
 			if ("shelter" in stop.tags 
 				&& stop.tags["shelter"] != "no" 
@@ -164,19 +157,16 @@ Novam.schemes = [
 					return "blue"+icon;
 
 			else if ("highway" in stop.tags
-				&& (("naptan:verified" in stop.tags && stop.tags["naptan:verified"] == "no")
-				|| ("naptan:unverified" in stop.tags && stop.tags["naptan:unverified"] == "yes")))
+				&& "naptan:verified" in stop.tags)
 					return "red"+icon;
 
 			else if ("highway" in stop.tags
-				&& ((!("naptan:verified" in stop.tags) || stop.tags["naptan:verified"] != "no")
-					|| (!("naptan:unverified" in stop.tags) || stop.tags["naptan:unverified"] != "yes"))
+				&& !("naptan:verified" in stop.tags)
 				&& "note" in stop.tags)
 					return "orange"+icon;
 
 			else if ("highway" in stop.tags
-				&& ((!("naptan:verified" in stop.tags) || stop.tags["naptan:verified"] != "no")
-					|| (!("naptan:unverified" in stop.tags) || stop.tags["naptan:unverified"] != "yes"))
+				&& !("naptan:verified" in stop.tags)
 				&& !("note" in stop.tags))
 					return "green"+icon;
 
@@ -196,11 +186,8 @@ Novam.schemes = [
 		},
 		get_invalid_tags: function(stop) {
 			tags = {};
-			if ("naptan:unverified" in stop.tags && stop.tags["naptan:unverified"] != "no")
-				tags["naptan:unverified"] = "Delete this tag or set it to \u2018no\u2019";
-
-			if ("naptan:verified" in stop.tags && stop.tags["naptan:verified"] != "yes")
-				tags["naptan:verified"] = "Delete this tag or set it to \u2018yes\u2019";
+			if ("naptan:verified" in stop.tags)
+				tags["naptan:verified"] = "Delete this tag once the stop has been verified on the ground";
 			
 			if ("note" in stop.tags)	
 				tags["note"] = "This note needs to be removed to complete the stop";
@@ -240,20 +227,15 @@ Novam.schemes = [
 			}
 
 			if ("highway" in stop.tags
-				&& !("naptan:AtcoCode" in stop.tags)
-				)
+				&& !("naptan:AtcoCode" in stop.tags))
 					return "yellow"+icon;
 			else if ("naptan:AtcoCode" in stop.tags
-				&& (("naptan:verified" in stop.tags && stop.tags["naptan:verified"] == "no")
-				|| ("naptan:unverified" in stop.tags && stop.tags["naptan:unverified"] == "yes"))
-				)
+				&& "naptan:verified" in stop.tags)
 					return "blue"+icon;
 			else if (!("highway" in stop.tags)
 				|| !("naptan:AtcoCode" in stop.tags)
-				|| ("naptan:unverified" in stop.tags && stop.tags["naptan:unverified"] != "no")
-				|| ("naptan:verified" in stop.tags && stop.tags["naptan:verified"] != "yes")
-				|| ("shelter" in stop.tags && stop.tags["shelter"] != "yes" && stop.tags["shelter"] != "no")
-				)
+				|| "naptan:verified" in stop.tags
+				|| ("shelter" in stop.tags && stop.tags["shelter"] != "yes" && stop.tags["shelter"] != "no"))
 					return "orange"+icon;
 			else
 				return "green"+icon;
@@ -273,11 +255,8 @@ Novam.schemes = [
 		},
 		get_invalid_tags: function(stop) {
 			tags = {};
-			if ("naptan:unverified" in stop.tags && stop.tags["naptan:unverified"] != "no")
-				tags["naptan:unverified"] = "Delete this tag or set it to \u2018no\u2019";
-
-			if ("naptan:verified" in stop.tags && stop.tags["naptan:verified"] != "yes")
-				tags["naptan:verified"] = "Delete this tag or set it to \u2018yes\u2019";
+			if ("naptan:verified" in stop.tags)
+				tags["naptan:verified"] = "Delete this tag once the stop has been verified on the ground";
 			
 			if ("shelter" in stop.tags && (stop.tags["shelter"] != "no" && stop.tags["shelter"] != "yes"))
 				tags["shelter"] = "Must be either \u2018yes\u2019 or \u2018no\u2019";

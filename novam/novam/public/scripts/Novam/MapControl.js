@@ -105,8 +105,8 @@ Novam.MapControl = Class.create({
 			transitionEffect: "resize"
 		});
 		this.map.addLayer(mapnik);
-	
-		// Create a öpnvkarte base layer:
+		
+		// Create an öpnvkarte base layer:
 		/* I need to ask if they mind if we use their tiles
 		 * 
 		var public_transport = new OpenLayers.Layer.OSM(

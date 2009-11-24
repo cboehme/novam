@@ -144,6 +144,9 @@ p.StopViewer
 	text-align: right;
 }
 
+span.StopViewer.OSMReference
+	{ color: #babdb6; }
+
 object.StopViewer
 {
 	/* display: none does not work here as Opera

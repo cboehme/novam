@@ -25,6 +25,7 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 	
 	model: null,
 	caption_icon: null,
+	osm_reference: null,
 	list: null,
 	extras: null,
 	josm_starter: null,
@@ -47,14 +48,12 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
 
 		this.caption_icon = new Element("img", {"alt": "Bus stop icon"});
+		this.osm_reference = new Element("span", {"class": "StopViewer OSMReference"}, "Ref");
 
-		var caption = new Element("h2", {"class": "StopViewer"});
-
-		caption.appendChild(this.caption_icon);
-		caption.appendChild(Text("Bus Stop"));
+		var caption = Builder.node("h2", {"class": "StopViewer"}, 
+			[this.caption_icon, "Bus Stop", this.osm_reference]);
 
 		this.list = new Element("dl", {"class": "StopViewer"});
-
 		this.extras = new Element("p", {"class": "StopViewer"});
 
 		this.container.appendChild(caption);
@@ -85,6 +84,7 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		if (stop === null) {
 			appendItem.call(this, "No Stop Selected", "", "");
 			this.caption_icon.src = this._default_get_stop_icon() + ".png";
+			this.osm_reference.removeChildren();
 		} else {
 			var missing_tags = this.get_missing_tags(stop); 
 			var invalid_tags = this.get_invalid_tags(stop);
@@ -115,19 +115,25 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 			}, this);
 
 			this.caption_icon.src = this.get_stop_icon(stop) + ".png";
+			this.osm_reference.replaceChildren(Text(" | " + stop.osm_id + " v" + stop.osm_version));
 		}
 
 		this.extras.removeChildren();
 		if(this.model.selected_stop !== null && (this.model.highlighted_stop === null 
 			|| this.model.selected_stop == this.model.highlighted_stop)) {
-
 				var potlatch_link = Builder.node("a", { "href": "javascript:void(0);" }, "Edit in Potlatch");
 				potlatch_link.observe("click", this.edit_in_potlatch.bind(this));
 
 				var josm_link = Builder.node("a", { "href": "javascript:void(0);" }, "Edit in JOSM");
 				josm_link.observe("click", this.edit_in_josm.bind(this));
 
-				this.extras.appendChild(concatElements(potlatch_link," | ", josm_link));
+				var history_link = Builder.node("a", { 
+					href: "http://www.openstreetmap.org/browse/node/" 
+						+ encodeURIComponent(this.model.selected_stop.osm_id) + "/history", 
+					"target": "Novam::OSM-History"
+				}, "View History");
+
+				this.extras.appendChild(concatElements(potlatch_link," | ", josm_link, " | ", history_link));
 		}
 	},
 

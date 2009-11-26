@@ -28,7 +28,7 @@ body
 {
 	position: absolute;
 	left: 10px;
-	top: 43px;
+	top: 78px;
 	right: 35%;
 	bottom: 10px;
 
@@ -80,4 +80,17 @@ body
 	border: none;
 
 	margin-left: 20px;
+}
+
+#searchPanel
+{
+	position: absolute;
+	left: 10px;
+	top: 43px;
+	right: 35%;
+	height: 35px;
+
+	margin: 0px;
+	padding: 0px;
+	border: none;
 }

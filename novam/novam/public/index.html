@@ -51,6 +51,7 @@
 			var stopPanel = new Novam.WidgetContainer("stopPanel");
 			var mapKeyPanel = new Novam.WidgetContainer("mapKeyPanel");
 			var schemePanel = new Novam.WidgetContainer("schemePanel");
+			var searchPanel = new Novam.WidgetContainer("searchPanel");
 
 			model = new Novam.Model();
 
@@ -58,10 +59,12 @@
 			stopViewer = new Novam.StopViewer(model);
 			mapKey = new Novam.MapKey(model);
 			schemeSelector = new Novam.SchemeSelector(model);
+			searchBox = new Novam.SearchBox(mapControl.map);
 			
 			stopPanel.embedWidget(stopViewer);
 			mapKeyPanel.embedWidget(mapKey);
 			schemePanel.embedWidget(schemeSelector);
+			searchPanel.embedWidget(searchBox);
 		});
 
 	</script>
@@ -76,5 +79,6 @@
 	<div id="stopPanel"></div>
 	<div id="mapKeyPanel"></div>
 	<div id="schemePanel"></div>
+	<div id="searchPanel"></div>
 </body>
 </html>

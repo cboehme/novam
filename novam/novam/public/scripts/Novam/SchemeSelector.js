@@ -34,7 +34,7 @@ Novam.SchemeSelector = Class.create(Novam.Widget, {
 		this.model.events.register("scheme_selected", this, this.scheme_selected);
 		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
 
-		this.selector = new Element("select", {"size": "1"});
+		this.selector = new Element("select", {"size": "1", "id": "schemeSelector" + this.widgetId});
 		this.selector.observe("change", function(evt) {
 			this.model.select_scheme(this.selector.value);
 		}.bind(this));

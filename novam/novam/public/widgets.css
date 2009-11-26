@@ -241,6 +241,62 @@ fieldset.SchemeSelector select
 	{ width: 100%; }
 
 /*
+ * SearchBox
+ */
+fieldset.SearchBox
+{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+
+	margin: 0px;
+	margin-bottom: 5px;
+
+	padding: 0px;
+	padding-top: 6px;
+
+	text-align: left;
+
+	border-style: none;
+	border-top: 1px solid #babdb6;
+
+	font-size: small;
+
+	overflow: hidden;
+}
+
+fieldset.SearchBox label
+{
+	margin-right: 10px; 
+
+	font-weight: bold; 
+	vertical-align: top;
+}
+
+fieldset.SearchBox input[type=text]
+	{ width: 30%; 
+	vertical-align: top;
+	}
+
+fieldset.SearchBox button
+	{ margin-left: 10px;
+	vertical-align: top;
+	}
+	
+
+fieldset.SearchBox span.SearchBox.LocationInfo
+{
+	display: inline-block;
+	max-width: 40%;
+	vertical-align: top;
+	margin-left: 10px;
+
+	font-size: x-small;
+}
+
+/*
  * MapControl
  */
 

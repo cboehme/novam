@@ -86,10 +86,10 @@ Novam.MapControl = Class.create({
 		// browser has a chance to  follow it. Since the click is not 
 		// propagated anymore we need to simulate "clicking" on the link
 		// by setting the new location manually:
-		OpenLayers.Event.observe($$("." + this.permalink_control.displayClass + " a")[0], 
-			"click", function(e) {
-				location.href = OpenLayers.Event.element(e ? e : window.event).href;
-				OpenLayers.Event.stop(e ? e : window.event);
+		$$("." + this.permalink_control.displayClass + " a")[0].observe( 
+			"click", function(evt) {
+				location.href = evt.findElement().href;
+				evt.stop();
 				return false;
 			}
 		);
@@ -235,10 +235,9 @@ Novam.MapControl = Class.create({
 			var request = OpenLayers.Request.GET({
 				url: "osmdata?bbox="+bounds.toBBOX(),
 				scope: this,
-				success: function (request)
-				{
-					json = new OpenLayers.Format.JSON();
-					data = json.read(request.responseText);
+				success: function (request) {
+					var json = new OpenLayers.Format.JSON();
+					var data = json.read(request.responseText);
 					data.stops.each(function (stop) {
 						this.model.add_stop(stop);
 					}, this);

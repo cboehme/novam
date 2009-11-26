@@ -32,6 +32,7 @@ var jsFiles = new Array(
 	"Novam/FeatureControl.js",
 	"Novam/Schemes.js",
 	"Novam/MapKey.js",
+	"Novam/SearchBox.js",
 	"Novam/ImportsFinished.js"
 );
 

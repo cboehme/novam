@@ -27,7 +27,8 @@ h1,
 ul#tools_menu,
 #stopPanel,
 #mapKeyPanel,
-#schemePanel
+#schemePanel,
+#searchPanel
 	{ display: none; }
 
 #mapPanel

@@ -26,6 +26,9 @@ Novam.SearchBox = Class.create(Novam.Widget, {
 	EPSG4326: new OpenLayers.Projection("EPSG:4326"),
 	map: null,
 	textBox: null,
+	flashMessage: null,
+	resultsBrowser: null,
+	resultsCounter: null,
 	locationInfo: null,
 	locations: null,
 	currentLocation: -1,
@@ -35,9 +38,11 @@ Novam.SearchBox = Class.create(Novam.Widget, {
 
 		this.map = map;
 
+		// Create search form:
+		
 		this.textBox = Builder.node("input", {"type": "text", "id": "searchBox" + this.widgetId});
 		this.textBox.observe("keypress", function(evt) {
-			var key = event.which || event.keyCode;
+			var key = evt.which || evt.keyCode;
 			if (key == Event.KEY_RETURN) {
 				this.searchLocation();
 			}
@@ -50,8 +55,20 @@ Novam.SearchBox = Class.create(Novam.Widget, {
 			this.searchLocation();
 		}.bind(this));
 
-		var previousButton = Builder.node("button", {"type": "button"}, "<");
-		previousButton.observe("click", function(evt) {
+		var fieldset = Builder.node("fieldset", {"class": "SearchBox"},
+			[label, this.textBox, searchButton]);
+		this.container.appendChild(fieldset);
+		
+		// Create flash message:
+
+		this.flashMessage = Builder.node("div", {"class": "SearchBox FlashMessage"});
+		this.flashMessage.hide();
+		this.container.appendChild(this.flashMessage);
+
+		// Create results browser:
+		
+		var previousResult = Builder.node("div", {"class": "PreviousResult"});
+		previousResult.observe("click", function(evt) {
 			if (this.currentLocation > 0) {
 				this.gotoLocation(this.currentLocation-1);
 			} else {
@@ -59,21 +76,28 @@ Novam.SearchBox = Class.create(Novam.Widget, {
 			}
 		}.bind(this));
 
-		var nextButton = Builder.node("button", {"type": "button"}, ">");
-		nextButton.observe("click", function(evt) {
+		var nextResult = Builder.node("div", {"class": "NextResult"});
+		nextResult.observe("click", function(evt) {
 			if (this.currentLocation+1 < this.locations.length) {
 				this.gotoLocation(this.currentLocation+1);
 			} else {
 				this.gotoLocation(0);
 			}
 		}.bind(this));
+		
+		this.resultsCounter = Builder.node("div", {"class": "ResultsCounter"});
 
-		this.locationInfo = Builder.node("span", {"class": "SearchBox LocationInfo"});
+		this.locationInfo = Builder.node("div", {"class": "LocationInfo"});
+		this.locationInfo.observe("click", function(evt) {
+			this.gotoLocation(this.currentLocation);
+		}.bind(this));
 
-		var fieldset = Builder.node("fieldset", {"class": "SearchBox"},
-			[label, this.textBox, searchButton, previousButton, this.locationInfo, nextButton]);
+		this.resultsBrowser = Builder.node("div", {"class": "SearchBox ResultsBrowser"},
+			[previousResult, this.resultsCounter, this.locationInfo, nextResult]);
 
-		this.container.appendChild(fieldset);
+		this.resultsBrowser.hide();
+		this.container.appendChild(this.resultsBrowser);
+
 	},
 
 	searchLocation: function() {
@@ -81,6 +105,14 @@ Novam.SearchBox = Class.create(Novam.Widget, {
 		bounds = bounds.transform(this.map.getProjectionObject(), this.EPSG4326).toArray();
 		var viewbox = bounds[0]+","+bounds[3]+","+bounds[2]+","+bounds[1];
 		
+		this.resultsBrowser.hide();
+		this.flashMessage.replaceChildren([
+			Builder.node("img", {"src": "magnifying-glass.png"}),
+			Text("Searching ..."), Builder.node("br"),
+			Builder.node("a", {"href": "http://nominatim.openstreetmap.org/"}, ["nominatim.openstreetmap.org"])
+		]);
+		this.flashMessage.show()
+
 		var request = OpenLayers.Request.GET({
 			url: "nominatim?viewbox="+viewbox+"&q="+encodeURIComponent(this.textBox.value)+"&format=xml",
 			scope: this,
@@ -100,13 +132,31 @@ Novam.SearchBox = Class.create(Novam.Widget, {
 						this.locations.push({info: locInfo, boundingBox: bounds});	
 					}
 				}
-				this.gotoLocation(0);
+
+				if (this.locations.length > 0) {
+					this.flashMessage.hide();
+					this.resultsBrowser.show();
+					this.gotoLocation(0);
+				} else {
+					this.flashMessage.replaceChildren([
+						Builder.node("img", {"src": "no-results.png"}),
+						Text("No locations found"),
+						Builder.node("br"),
+						Text("Please try a different search term")
+					]);
+					this.flashMessage.fade({delay: 5, duration: 0.3});
+				}
 			}
 		});
 	},
 
 	gotoLocation: function(loc) {
 		this.locationInfo.replaceChildren(Text(this.locations[loc].info));
+		this.resultsCounter.replaceChildren([
+			Builder.node("span", {"class": "LocationIndex"}, (loc+1).toString()),
+			Text("/"),
+			Builder.node("span", {"class": "LocationLength"}, this.locations.length.toString())
+		]);
 		var extent = this.locations[loc].boundingBox.clone();
 		this.map.zoomToExtent(extent.transform(this.EPSG4326, this.map.getProjectionObject()));
 		this.currentLocation = loc;

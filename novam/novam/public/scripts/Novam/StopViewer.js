@@ -48,7 +48,7 @@ Novam.StopViewer = Class.create(Novam.Widget, {
 		this.model.events.register("scheme_unselected", this, this.scheme_unselected);
 
 		this.caption_icon = new Element("img", {"alt": "Bus stop icon"});
-		this.osm_reference = new Element("span", {"class": "StopViewer OSMReference"}, "Ref");
+		this.osm_reference = new Element("span", {"class": "OSMReference"}, "Ref");
 
 		var caption = Builder.node("h2", {"class": "StopViewer"}, 
 			[this.caption_icon, "Bus Stop", this.osm_reference]);

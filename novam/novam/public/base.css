@@ -34,7 +34,10 @@ a:visited
 
 a:hover,
 a:active
-	{ text-decoration: underline; }
+{
+	color: #204a87;
+	text-decoration: underline;
+}
 
 /*
  * Header: title and tools menu

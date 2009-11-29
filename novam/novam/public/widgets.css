@@ -144,7 +144,7 @@ p.StopViewer
 	text-align: right;
 }
 
-span.StopViewer.OSMReference
+h2.StopViewer span.OSMReference
 	{ color: #babdb6; }
 
 object.StopViewer
@@ -243,6 +243,7 @@ fieldset.SchemeSelector select
 /*
  * SearchBox
  */
+
 fieldset.SearchBox
 {
 	position: absolute;
@@ -251,50 +252,176 @@ fieldset.SearchBox
 	right: 0px;
 	bottom: 0px;
 
-	margin: 0px;
-	margin-bottom: 5px;
+	margin: 0px 0px 2px;
 
-	padding: 0px;
-	padding-top: 6px;
+	padding: 5px 450px 5px 70px;
 
 	text-align: left;
 
-	border-style: none;
+	border-left: none;
+	border-right: none;
 	border-top: 1px solid #babdb6;
+	border-bottom: 1px solid #babdb6;
 
 	font-size: small;
 
 	overflow: hidden;
+
+	line-height: 26px;
 }
 
 fieldset.SearchBox label
 {
-	margin-right: 10px; 
+	width: 45px;
+
+	margin-left: -60px;
+	margin-right: 10px;
+
+	vertical-align: middle;
 
 	font-weight: bold; 
-	vertical-align: top;
+
+	line-height: normal; 
 }
 
 fieldset.SearchBox input[type=text]
-	{ width: 30%; 
-	vertical-align: top;
-	}
+{
+	width: 100%; 
+	vertical-align: middle;
+
+	line-height: normal; 
+}
 
 fieldset.SearchBox button
-	{ margin-left: 10px;
-	vertical-align: top;
-	}
-	
-
-fieldset.SearchBox span.SearchBox.LocationInfo
 {
-	display: inline-block;
-	max-width: 40%;
-	vertical-align: top;
+	width: 70px;
+	margin-right: -80px;
 	margin-left: 10px;
+
+	vertical-align: middle;
+
+	line-height: normal; 
+}
+
+div.SearchBox.FlashMessage
+{
+	position: absolute;
+	top: 6px;
+	right: 10px;
+	bottom: 6px;
+
+	padding: 0px 0px;
+
+	width: 350px;
 
 	font-size: x-small;
 }
+
+div.SearchBox.FlashMessage img
+{
+	float: left;
+	margin-right: 10px;
+}
+
+div.SearchBox.ResultsBrowser
+{
+	display: table-row;
+
+	position: absolute;
+	top: 6px;
+	right: 10px;
+	bottom: 6px;
+
+	width: 350px;
+}
+
+div.SearchBox.ResultsBrowser div.PreviousResult
+{
+	display: table-cell;
+
+	vertical-align: middle;
+
+	width: 12px;
+	height: 26px;
+
+	background-image: url(arrow_left.png);
+	background-position: center;
+	background-repeat: no-repeat;
+
+	cursor: pointer;
+}
+
+div.SearchBox.ResultsBrowser div.PreviousResult:hover
+	{ background-image: url(arrow_left_highlighted.png); }
+
+div.SearchBox.ResultsBrowser div.NextResult
+{
+	display: table-cell;
+
+	vertical-align: middle;
+
+	width: 12px;
+	height: 26px;
+
+	background-image: url(arrow_right.png);
+	background-position: center;
+	background-repeat: no-repeat;
+
+	cursor: pointer;
+}
+
+div.SearchBox.ResultsBrowser div.NextResult:hover
+	{ background-image: url(arrow_right_highlighted.png); }
+
+div.SearchBox.ResultsBrowser div.ResultsCounter
+{
+	display: table-cell;
+
+	vertical-align: middle;
+	
+	width: 26px;
+	max-height: 26px;
+
+	padding: 0px 10px;
+}
+
+div.SearchBox.ResultsBrowser div.ResultsCounter span.LocationIndex
+{
+	position: relative;
+	top: -4px;
+	left: -1px;
+	
+	font-size: small;
+}
+
+div.SearchBox.ResultsBrowser div.ResultsCounter span.LocationLength
+{
+	position: relative;
+	top: 3px;
+	left: 1px;
+	
+	font-size: small;
+}
+
+div.SearchBox.ResultsBrowser div.LocationInfo
+{
+	display: table-cell;
+
+	vertical-align: middle;
+	
+	width: 270px;
+	max-height: 26px;
+
+	padding: 0px 10px 0px 0px;
+
+	font-size: x-small;
+
+	overflow: hidden;
+	cursor: pointer;
+}
+
+div.SearchBox.ResultsBrowser div.LocationInfo:hover
+	{ color: #204a87; }
 
 /*
  * MapControl

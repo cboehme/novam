@@ -1,0 +1,64 @@
+/*
+ * (c) 2009 Christoph Böhme <christoph@b3e.net>
+ * 
+ * This file is part of Novam.
+ * 
+ * Novam is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Novam is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+/*
+ * IE7 does not seem to undestand table-row and table-cell which
+ * are used to centre the results browser vertically. So, this
+ * stylesheets implement a not-so-pretty workaround for IE7.
+ */
+
+div.SearchBox.ResultsBrowser
+	{ display: block; }
+
+div.SearchBox.ResultsBrowser div.PreviousResult
+{
+	display: block;
+
+	position: absolute;
+	left: 0px;
+	top:  0px;
+}
+
+div.SearchBox.ResultsBrowser div.NextResult
+{
+	display: block;
+
+	position: absolute;
+	right: 0px;
+	top:  0px;
+}
+
+div.SearchBox.ResultsBrowser div.ResultsCounter
+{
+	display: block;
+
+	position: absolute;
+	left: 12px;
+	top:  0px;
+}
+
+div.SearchBox.ResultsBrowser div.LocationInfo
+{
+	display: block;
+
+	position: absolute;
+	left: 58px;
+	top:  0px;
+}

@@ -6,7 +6,7 @@ CREATE TABLE stops (
 	lon DECIMAL(10,7) NOT NULL,
 	osm_id BIGINT NOT NULL UNIQUE,
 	osm_version BIGINT NOT NULL CHECK (osm_version > 0)
-	);
+);
 ALTER SEQUENCE stops_id_seq OWNED BY stops.id;
 
 CREATE INDEX stops_lat_lon_idx ON stops (lat, lon);
@@ -19,6 +19,4 @@ CREATE TABLE tags (
 	name VARCHAR(255) NOT NULL,
 	value VARCHAR(65535) NOT NULL,  -- based on MySQL's TEXT type
 	PRIMARY KEY (stop_id, name)
-	);
-
-VACUUM ANALYZE;
+);

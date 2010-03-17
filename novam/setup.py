@@ -15,7 +15,8 @@ setup(
     install_requires=[
         "Pylons>=0.9.7",
         "SQLAlchemy>=0.5",
-		"psycopg2>=2.0.7"
+		"psycopg2>=2.0.7",
+		"pycha>=0.5.2"
     ],
     setup_requires=["PasteScript>=1.6.3"],
     packages=find_packages(exclude=['ez_setup']),

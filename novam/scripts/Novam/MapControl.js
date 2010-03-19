@@ -346,9 +346,14 @@ Novam.MapControl = Class.create({
 
 	_read_osm: function(doc) {
 		var timestamp = doc.firstChild.getAttribute("planetDate");
+		if (timestamp) {
+			timestamp = timestamp.slice(0, 4) + "-" + timestamp.slice(4, 6) + "-" + timestamp.slice(6, 8);
+		} else
+			timestamp = "";
+
 		var data = {
 			stops: [],
-			timestamp: timestamp.slice(0, 4) + "-" + timestamp.slice(4, 6) + "-" + timestamp.slice(6, 8)
+			timestamp: timestamp;
 		};
 		$A(doc.getElementsByTagName("node")).each(function (node) {
 			stop = {

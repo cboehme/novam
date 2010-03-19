@@ -233,13 +233,13 @@ Novam.MapControl = Class.create({
 			this.map_status.show();
 
 			OpenLayers.Request.GET({
-				url: "http://localhost:8080/xapi/api/0.6/node[bbox="+bounds.toBBOX()+"][highway=bus_stop]",
+				url: "/xapi/api/0.6/node[bbox="+bounds.toBBOX()+"][highway=bus_stop]",
 				scope: this,
 				success: this._get_request_handler()
 			});
 
 			OpenLayers.Request.GET({
-				url: "http://localhost:8080/xapi/api/0.6/node[bbox="+bounds.toBBOX()+"][naptan:AtcoCode]",
+				url: "/xapi/api/0.6/node[bbox="+bounds.toBBOX()+"][naptan:AtcoCode]",
 				scope: this,
 				success: this._get_request_handler()
 			});

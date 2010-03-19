@@ -114,7 +114,7 @@ Novam.SearchBox = Class.create(Novam.Widget, {
 		this.flashMessage.show()
 
 		var request = OpenLayers.Request.GET({
-			url: "http://localhost:8080/nominatim?viewbox="+viewbox+"&q="+encodeURIComponent(this.textBox.value)+"&format=xml",
+			url: "/nominatim?viewbox="+viewbox+"&q="+encodeURIComponent(this.textBox.value)+"&format=xml",
 			scope: this,
 			success: function (request)
 			{

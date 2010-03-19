@@ -373,7 +373,7 @@ Novam.MapControl = Class.create({
 		var bounds = this.map.getExtent().clone();
 		bounds = bounds.transform(this.map.getProjectionObject(), this.EPSG4326);
 
-		var data = this.read_osm(request.responseXML);
+		var data = this._read_osm(request.responseXML);
 		data.stops.each(function (stop) {
 			this.model.add_stop(stop);
 		}, this);

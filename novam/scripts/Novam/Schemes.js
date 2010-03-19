@@ -55,14 +55,14 @@ Novam.schemes = [
 
 			if ("highway" in stop.tags 
 				&& "naptan:AtcoCode" in stop.tags 
-				&& !("naptan:verified" in stop.tags)
+				&& (!("naptan:verified" in stop.tags) || stop.tags["naptan:verified"] == "yes")
 				&& "route_ref" in stop.tags
 				&& "shelter" in stop.tags)
 					return "green"+icon;
 
 			else if (!("highway" in stop.tags)
 				&& "naptan:AtcoCode" in stop.tags 
-				&& "naptan:verified" in stop.tags)
+				&& ("naptan:verified" in stop.tags && stop.tags["naptan:verified"] == "no"))
 					return "blue"+icon;
 
 			else if ("highway" in stop.tags
@@ -97,7 +97,7 @@ Novam.schemes = [
 		get_invalid_tags: function(stop) {
 			tags = {};
 
-			if ("naptan:verified" in stop.tags)
+			if ("naptan:verified" in stop.tags && stop.tags["naptan:verified"] == "no")
 				tags["naptan:verified"] = "Delete this tag once the stop has been verified on the ground";
 
 			if ("shelter" in stop.tags 

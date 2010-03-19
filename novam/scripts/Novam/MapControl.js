@@ -232,23 +232,16 @@ Novam.MapControl = Class.create({
 			this.map_status.replaceChildren(Text("Loading ..."));
 			this.map_status.show();
 
-			var request = OpenLayers.Request.GET({
-				url: "osmdata?bbox="+bounds.toBBOX(),
+			OpenLayers.Request.GET({
+				url: "http://localhost:8080/xapi/api/0.6/node[bbox="+bounds.toBBOX()+"][highway=bus_stop]",
 				scope: this,
-				success: function (request) {
-					var json = new OpenLayers.Format.JSON();
-					var data = json.read(request.responseText);
-					data.stops.each(function (stop) {
-						this.model.add_stop(stop);
-					}, this);
-					this.model.update_map(bounds, this.map.getZoom(), data.timestamp);
-					this.map_status.hide();
-					
-					if (this.initial_selection != null) {
-						this.model.select_stop(this.initial_selection);
-						this.initial_selection = null;
-					}
-				}
+				success: this._get_request_handler()
+			});
+
+			OpenLayers.Request.GET({
+				url: "http://localhost:8080/xapi/api/0.6/node[bbox="+bounds.toBBOX()+"][naptan:AtcoCode]",
+				scope: this,
+				success: this._get_request_handler()
 			});
 			
 			// Remove stops which are outside the viewport:
@@ -349,6 +342,59 @@ Novam.MapControl = Class.create({
 		this._set_marker_style();
 		this._update_stop_markers();
 		this._update_permalink({scheme: undefined});
+	},
+
+	_read_osm: function(doc) {
+		var timestamp = doc.firstChild.getAttribute("planetDate");
+		var data = {
+			stops: [],
+			timestamp: timestamp.slice(0, 4) + "-" + timestamp.slice(4, 6) + "-" + timestamp.slice(6, 8)
+		};
+		$A(doc.getElementsByTagName("node")).each(function (node) {
+			stop = {
+				id: node.getAttribute("id"),
+				lat: node.getAttribute("lat"),
+				lon: node.getAttribute("lon"),
+				osm_id: node.getAttribute("id"),
+				osm_version: node.getAttribute("version"),
+				tags: {}
+			};
+			$A(node.getElementsByTagName("tag")).each(function (tag) {
+				stop.tags[tag.getAttribute("k")] = tag.getAttribute("v");
+			}, this);
+			data.stops.push(stop);
+		}, this);
+		return data;
+	},
+
+	_handle_request: function (request) {
+		this._handle_request.pending -= 1;
+
+		var bounds = this.map.getExtent().clone();
+		bounds = bounds.transform(this.map.getProjectionObject(), this.EPSG4326);
+
+		var data = this.read_osm(request.responseXML);
+		data.stops.each(function (stop) {
+			this.model.add_stop(stop);
+		}, this);
+		
+ 		if (this._handle_request.pending == 0) {
+			this.model.update_map(bounds, this.map.getZoom(), data.timestamp);
+			this.map_status.hide();
+			
+			if (this.initial_selection != null) {
+				this.model.select_stop(this.initial_selection);
+				this.initial_selection = null;
+			}
+		}
+	},
+
+	_get_request_handler: function () {
+		if (this._handle_request.pending === undefined) {
+			this._handle_request.pending = 0;
+		}
+		this._handle_request.pending += 1;
+		return this._handle_request;
 	},
 
 	_find_stop: function(id) {

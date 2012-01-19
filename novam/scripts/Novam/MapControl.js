@@ -239,7 +239,7 @@ Novam.MapControl = Class.create({
 			});
 
 			OpenLayers.Request.GET({
-				url: "/xapi/?node[bbox="+bounds.toBBOX()+"][naptan:AtcoCode]",
+				url: "/xapi/?node[bbox="+bounds.toBBOX()+"][naptan:AtcoCode=*]",
 				scope: this,
 				success: this._get_request_handler()
 			});
